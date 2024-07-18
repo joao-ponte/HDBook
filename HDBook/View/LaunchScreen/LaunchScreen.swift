@@ -29,7 +29,7 @@ struct LaunchScreen: View {
         NavigationView {
             GeometryReader {geometry in
                 ZStack {
-                    Color.red // Replace with your app's primary color
+                    Color.red
                     VStack {
                         Spacer()
                         Spacer()
@@ -39,7 +39,7 @@ struct LaunchScreen: View {
                             .scaledToFit()
                             .padding(.horizontal, geometry.size.width * 0.09)
 
-                        Text("Combined App")
+                        Text("HD Book")
                             .font(.custom("CaslonDoric-Medium", size: geometry.size.width * 0.06))
                             .foregroundColor(.white)
                             .padding(.top, geometry.size.height * 0.009)
