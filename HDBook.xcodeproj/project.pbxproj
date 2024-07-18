@@ -14,6 +14,12 @@
 		1DD7D7132C49367500CFA245 /* HDBookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7122C49367500CFA245 /* HDBookTests.swift */; };
 		1DD7D71D2C49367500CFA245 /* HDBookUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D71C2C49367500CFA245 /* HDBookUITests.swift */; };
 		1DD7D71F2C49367500CFA245 /* HDBookUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D71E2C49367500CFA245 /* HDBookUITestsLaunchTests.swift */; };
+		1DD7D72C2C4950AE00CFA245 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D72B2C4950AE00CFA245 /* AppDelegate.swift */; };
+		1DD7D72E2C49512100CFA245 /* FirebaseStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D72D2C49512100CFA245 /* FirebaseStorageService.swift */; };
+		1DD7D7312C4951C700CFA245 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1DD7D7302C4951C700CFA245 /* FirebaseStorage */; };
+		1DD7D7332C4952CE00CFA245 /* ARViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7322C4952CD00CFA245 /* ARViewCoordinator.swift */; };
+		1DD7D7352C4953DB00CFA245 /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7342C4953DB00CFA245 /* LaunchScreen.swift */; };
+		1DD7D7382C4953F500CFA245 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 1DD7D7372C4953F500CFA245 /* Reachability */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +50,10 @@
 		1DD7D7182C49367500CFA245 /* HDBookUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HDBookUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7D71C2C49367500CFA245 /* HDBookUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookUITests.swift; sourceTree = "<group>"; };
 		1DD7D71E2C49367500CFA245 /* HDBookUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		1DD7D72B2C4950AE00CFA245 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1DD7D72D2C49512100CFA245 /* FirebaseStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorageService.swift; sourceTree = "<group>"; };
+		1DD7D7322C4952CD00CFA245 /* ARViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewCoordinator.swift; sourceTree = "<group>"; };
+		1DD7D7342C4953DB00CFA245 /* LaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +61,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DD7D7312C4951C700CFA245 /* FirebaseStorage in Frameworks */,
+				1DD7D7382C4953F500CFA245 /* Reachability in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,9 +107,13 @@
 			isa = PBXGroup;
 			children = (
 				1DD7D7012C49367200CFA245 /* HDBookApp.swift */,
+				1DD7D72B2C4950AE00CFA245 /* AppDelegate.swift */,
 				1DD7D7032C49367200CFA245 /* ContentView.swift */,
 				1DD7D7052C49367400CFA245 /* Assets.xcassets */,
 				1DD7D7072C49367400CFA245 /* Preview Content */,
+				1DD7D72D2C49512100CFA245 /* FirebaseStorageService.swift */,
+				1DD7D7322C4952CD00CFA245 /* ARViewCoordinator.swift */,
+				1DD7D7342C4953DB00CFA245 /* LaunchScreen.swift */,
 			);
 			path = HDBook;
 			sourceTree = "<group>";
@@ -143,6 +159,10 @@
 			dependencies = (
 			);
 			name = HDBook;
+			packageProductDependencies = (
+				1DD7D7302C4951C700CFA245 /* FirebaseStorage */,
+				1DD7D7372C4953F500CFA245 /* Reachability */,
+			);
 			productName = HDBook;
 			productReference = 1DD7D6FE2C49367200CFA245 /* HDBook.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +235,10 @@
 				Base,
 			);
 			mainGroup = 1DD7D6F52C49367200CFA245;
+			packageReferences = (
+				1DD7D72F2C4951C700CFA245 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				1DD7D7362C4953F500CFA245 /* XCRemoteSwiftPackageReference "Reachability" */,
+			);
 			productRefGroup = 1DD7D6FF2C49367200CFA245 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -257,7 +281,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DD7D72C2C4950AE00CFA245 /* AppDelegate.swift in Sources */,
+				1DD7D7332C4952CE00CFA245 /* ARViewCoordinator.swift in Sources */,
+				1DD7D7352C4953DB00CFA245 /* LaunchScreen.swift in Sources */,
 				1DD7D7042C49367200CFA245 /* ContentView.swift in Sources */,
+				1DD7D72E2C49512100CFA245 /* FirebaseStorageService.swift in Sources */,
 				1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -588,6 +616,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1DD7D72F2C4951C700CFA245 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.29.0;
+			};
+		};
+		1DD7D7362C4953F500CFA245 /* XCRemoteSwiftPackageReference "Reachability" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1DD7D7302C4951C700CFA245 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1DD7D72F2C4951C700CFA245 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		1DD7D7372C4953F500CFA245 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1DD7D7362C4953F500CFA245 /* XCRemoteSwiftPackageReference "Reachability" */;
+			productName = Reachability;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1DD7D6F62C49367200CFA245 /* Project object */;
 }
