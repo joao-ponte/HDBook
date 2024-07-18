@@ -9,30 +9,30 @@ import UIKit
 import SwiftUI
 import FirebaseCore
 
-@main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
+class AppDelegate: NSObject, UIApplicationDelegate {
+    
     var window: UIWindow?
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
         guard FirebaseApp.app() != nil else {
             return false
         }
+        
         deleteMissingFiles()
-
+        
         let coordinator = ARViewCoordinator(firebaseStorageService: FirebaseStorageService.shared)
         let contentView = LaunchScreen(viewModel: TutorialCardsViewModel())
             .environmentObject(coordinator)
-
+        
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = UIHostingController(rootView: contentView)
         self.window = window
         window.makeKeyAndVisible()
-
+        
         return true
     }
-
+    
     func deleteMissingFiles() {
         Task {
             do {
@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
+    
     func applicationWillResignActive(_ application: UIApplication) {}
     func applicationDidEnterBackground(_ application: UIApplication) {}
     func applicationWillEnterForeground(_ application: UIApplication) {}
