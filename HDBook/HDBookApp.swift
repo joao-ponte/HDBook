@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct HDBookApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LaunchScreen(viewModel: TutorialCardsViewModel())
+                .environmentObject(ARViewCoordinator(firebaseStorageService: FirebaseStorageService.shared))
         }
     }
 }
