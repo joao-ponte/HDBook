@@ -32,6 +32,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             await arView.session.delegate = self
             await arView.session.run(configuration)
             self.arView = arView
+            print("ARView configured and session started.")
         } catch {
             print("Failed to configure ARView: \(error)")
         }
@@ -43,6 +44,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         do {
             let configuration = try createARConfiguration()
             await arView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+            print("AR session resumed.")
         } catch {
             print("Failed to resume AR session: \(error)")
         }
@@ -51,6 +53,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     // Pause AR Session
     func pauseARSession() {
         arView?.session.pause()
+        print("AR session paused.")
     }
 
     // Pause All Video Players
@@ -58,6 +61,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         for player in videoPlayers.values {
             player.pause()
         }
+        print("All video players paused.")
     }
 
     // Resume All Video Players
@@ -65,6 +69,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         for player in videoPlayers.values {
             player.play()
         }
+        print("All video players resumed.")
     }
 
     // Remove All Anchors
@@ -75,6 +80,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         activeAnchors.removeAll()
         stopAndRemoveAllVideoPlayers()
         await resetARTracking()
+        print("All anchors removed.")
     }
 
     // Reset AR Tracking
@@ -83,6 +89,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         do {
             let configuration = try createARConfiguration()
             await arView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+            print("AR tracking reset.")
         } catch {
             print("Failed to reset AR tracking: \(error)")
         }
@@ -94,6 +101,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         let referenceImages = firebaseStorageService.getARReferenceImages()
         configuration.trackingImages = Set(referenceImages)
         configuration.maximumNumberOfTrackedImages = 1 // Track only one image at a time
+        print("AR configuration created with \(referenceImages.count) reference images.")
         return configuration
     }
 
@@ -116,6 +124,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             return
         }
 
+        print("Image anchor detected: \(referenceImageName)")
+
         // Determine if it is a video or 360 image
         let videoURL = firebaseStorageService.videosDirectory
             .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
@@ -129,6 +139,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             if let arView = arView {
                 let videoScreen = createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
                 placeVideoScreen(videoScreen: videoScreen, imageAnchor: imageAnchor, uuid: uuid)
+                print("Playing video for image: \(referenceImageName)")
             } else {
                 print("Error: ARView is nil.")
             }
@@ -140,6 +151,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
 
                 is360ViewActive = true
                 pauseARSession()
+                print("Presenting 360 view for image: \(referenceImageName)")
             } else {
                 print("Error: ARView is nil or failed to load image.")
             }
@@ -162,6 +174,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
 
         // Start tracking timer
         startTrackingTimer(for: uuid)
+        print("Video screen placed for UUID: \(uuid)")
     }
 
     // Create Video Screen
@@ -193,6 +206,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             player.play()
         }
         videoPlayers[uuid] = player
+        print("Video material created for UUID: \(uuid)")
         return videoMaterial
     }
 
@@ -201,6 +215,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         trackingTimers[uuid] = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { [weak self] _ in
             self?.handleTrackingTimeout(for: uuid)
         }
+        print("Tracking timer started for UUID: \(uuid)")
     }
 
     // Handle Tracking Timeout
@@ -211,6 +226,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         activeAnchors.removeValue(forKey: uuid)
         videoPlayers.removeValue(forKey: uuid)
         trackingTimers.removeValue(forKey: uuid)
+        print("Tracking timeout handled for UUID: \(uuid)")
     }
 
     // Session Did Update
@@ -244,6 +260,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             videoPlayers[uuid] = nil
         }
         videoPlayers.removeAll()
+        print("All video players stopped and removed.")
     }
 
     // Place 360 Image Screen
@@ -258,6 +275,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
 
         activeAnchor = AnchorEntity(anchor: imageAnchor)
         arView.scene.addAnchor(activeAnchor!)
+        print("360 image screen placed for image anchor: \(imageAnchor.referenceImage.name ?? "")")
     }
 
     func exit360View() {
@@ -266,6 +284,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         Task {
             await resumeARSession()
         }
+        print("Exited 360 view.")
     }
 
     private func removePanoramaView() {
@@ -274,5 +293,6 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         if let panoramaView = arView.subviews.first(where: { $0 is CTPanoramaView }) {
             panoramaView.removeFromSuperview()
         }
+        print("Panorama view removed.")
     }
 }

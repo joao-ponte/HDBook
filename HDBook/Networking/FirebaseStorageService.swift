@@ -40,28 +40,43 @@ class FirebaseStorageService {
         if !fileManager.fileExists(atPath: url.path) {
             do {
                 try fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+                print("Created directory at: \(url.path)")
             } catch {
                 print("Error creating directory: \(error)")
             }
+        } else {
+            print("Directory already exists at: \(url.path)")
         }
     }
 
     func hasNewAssets() async throws -> Bool {
         let videoRef = storage.reference(withPath: "Videos")
         let image360Ref = storage.reference(withPath: "360View")
-        let imageRef = storage.reference().child("Images AR")
+        let imageRef = storage.reference().child("AR Images")
 
         let localVideoFiles = try FileManager.default.contentsOfDirectory(atPath: videosDirectory.path)
         let localImage360Files = try FileManager.default.contentsOfDirectory(atPath: images360Directory.path)
         let localImageFiles = try FileManager.default.contentsOfDirectory(atPath: imagesDirectory.path)
 
+        print("Local video files: \(localVideoFiles)")
+        print("Local 360 image files: \(localImage360Files)")
+        print("Local AR image files: \(localImageFiles)")
+
         let remoteVideoFiles = try await videoRef.listAll().items.map { $0.name }
         let remoteImage360Files = try await image360Ref.listAll().items.map { $0.name }
         let remoteImageFiles = try await imageRef.listAll().items.map { $0.name }
 
+        print("Remote video files: \(remoteVideoFiles)")
+        print("Remote 360 image files: \(remoteImage360Files)")
+        print("Remote AR image files: \(remoteImageFiles)")
+
         let newVideoFiles = Set(remoteVideoFiles).subtracting(localVideoFiles)
         let newImage360Files = Set(remoteImage360Files).subtracting(localImage360Files)
         let newImageFiles = Set(remoteImageFiles).subtracting(localImageFiles)
+
+        print("New video files: \(newVideoFiles)")
+        print("New 360 image files: \(newImage360Files)")
+        print("New AR image files: \(newImageFiles)")
 
         return !newVideoFiles.isEmpty || !newImage360Files.isEmpty || !newImageFiles.isEmpty
     }
@@ -76,7 +91,7 @@ class FirebaseStorageService {
             totalFiles += videoResult.items.count
             let image360Result = try await storage.reference(withPath: "360View").listAll()
             totalFiles += image360Result.items.count
-            let imageResult = try await storage.reference().child("Images AR").listAll()
+            let imageResult = try await storage.reference().child("AR Images").listAll()
             totalFiles += imageResult.items.count
         } catch {
             print("Error counting files: \(error)")
@@ -135,7 +150,7 @@ class FirebaseStorageService {
     }
 
     private func downloadImages(progress: @escaping (Int) -> Void) async -> Bool {
-        let imageRef = storage.reference().child("Images AR")
+        let imageRef = storage.reference().child("AR Images")
         var newImagesDownloaded = false
         do {
             let result = try await imageRef.listAll()
@@ -171,7 +186,7 @@ class FirebaseStorageService {
     func deleteMissingLocalFiles() async {
         await deleteMissingFiles(in: videosDirectory, storageRefPath: "Videos")
         await deleteMissingFiles(in: images360Directory, storageRefPath: "360View")
-        await deleteMissingFiles(in: imagesDirectory, storageRefPath: "Images AR")
+        await deleteMissingFiles(in: imagesDirectory, storageRefPath: "AR Images")
     }
 
     private func deleteMissingFiles(in localDirectory: URL, storageRefPath: String) async {
@@ -201,6 +216,7 @@ class FirebaseStorageService {
         let fileManager = FileManager.default
         do {
             let imageFiles = try fileManager.contentsOfDirectory(atPath: imagesDirectory.path)
+            print("Found \(imageFiles.count) image files in directory.")  // Debug log
             for file in imageFiles {
                 let imageURL = imagesDirectory.appendingPathComponent(file)
                 if let image = UIImage(contentsOfFile: imageURL.path) {
@@ -215,6 +231,7 @@ class FirebaseStorageService {
                         let arImage = ARReferenceImage(cgImage, orientation: .up, physicalWidth: physicalWidth)
                         arImage.name = file
                         arReferenceImages.append(arImage)
+                        print("Created ARReferenceImage: \(file) with width: \(physicalWidth) meters")  // Debug log
                     } else {
                         print("Error: Could not parse physical width from file \(file)")
                     }
@@ -225,6 +242,7 @@ class FirebaseStorageService {
         } catch {
             print("Error reading files in directory \(imagesDirectory.path): \(error)")
         }
+        print("Total ARReferenceImages created: \(arReferenceImages.count)")  // Debug log
     }
 
     func getARReferenceImages() -> [ARReferenceImage] {
