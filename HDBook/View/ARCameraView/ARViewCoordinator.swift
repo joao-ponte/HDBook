@@ -16,6 +16,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     var videoPlayers: [UUID: AVPlayer] = [:]
     var activeAnchors: [UUID: AnchorEntity] = [:]
     private var trackingTimers: [UUID: Timer] = [:]
+    private var activeAnchor: AnchorEntity? // Declared here
 
     @Published var is360ViewActive = false
     private var firebaseStorageService: FirebaseStorageService
@@ -92,7 +93,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         let configuration = ARImageTrackingConfiguration()
         let referenceImages = firebaseStorageService.getARReferenceImages()
         configuration.trackingImages = Set(referenceImages)
-        configuration.maximumNumberOfTrackedImages = 3
+        configuration.maximumNumberOfTrackedImages = 1 // Track only one image at a time
         return configuration
     }
 
