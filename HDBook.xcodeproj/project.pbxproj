@@ -1,0 +1,593 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7012C49367200CFA245 /* HDBookApp.swift */; };
+		1DD7D7042C49367200CFA245 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7032C49367200CFA245 /* ContentView.swift */; };
+		1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7052C49367400CFA245 /* Assets.xcassets */; };
+		1DD7D7092C49367400CFA245 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7082C49367400CFA245 /* Preview Assets.xcassets */; };
+		1DD7D7132C49367500CFA245 /* HDBookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7122C49367500CFA245 /* HDBookTests.swift */; };
+		1DD7D71D2C49367500CFA245 /* HDBookUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D71C2C49367500CFA245 /* HDBookUITests.swift */; };
+		1DD7D71F2C49367500CFA245 /* HDBookUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D71E2C49367500CFA245 /* HDBookUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1DD7D70F2C49367500CFA245 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1DD7D6F62C49367200CFA245 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1DD7D6FD2C49367200CFA245;
+			remoteInfo = HDBook;
+		};
+		1DD7D7192C49367500CFA245 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1DD7D6F62C49367200CFA245 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1DD7D6FD2C49367200CFA245;
+			remoteInfo = HDBook;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1DD7D6FE2C49367200CFA245 /* HDBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HDBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DD7D7012C49367200CFA245 /* HDBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookApp.swift; sourceTree = "<group>"; };
+		1DD7D7032C49367200CFA245 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		1DD7D7052C49367400CFA245 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1DD7D7082C49367400CFA245 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		1DD7D70E2C49367500CFA245 /* HDBookTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HDBookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DD7D7122C49367500CFA245 /* HDBookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookTests.swift; sourceTree = "<group>"; };
+		1DD7D7182C49367500CFA245 /* HDBookUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HDBookUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DD7D71C2C49367500CFA245 /* HDBookUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookUITests.swift; sourceTree = "<group>"; };
+		1DD7D71E2C49367500CFA245 /* HDBookUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1DD7D6FB2C49367200CFA245 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DD7D70B2C49367500CFA245 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DD7D7152C49367500CFA245 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1DD7D6F52C49367200CFA245 = {
+			isa = PBXGroup;
+			children = (
+				1DD7D7002C49367200CFA245 /* HDBook */,
+				1DD7D7112C49367500CFA245 /* HDBookTests */,
+				1DD7D71B2C49367500CFA245 /* HDBookUITests */,
+				1DD7D6FF2C49367200CFA245 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1DD7D6FF2C49367200CFA245 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7D6FE2C49367200CFA245 /* HDBook.app */,
+				1DD7D70E2C49367500CFA245 /* HDBookTests.xctest */,
+				1DD7D7182C49367500CFA245 /* HDBookUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1DD7D7002C49367200CFA245 /* HDBook */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7D7012C49367200CFA245 /* HDBookApp.swift */,
+				1DD7D7032C49367200CFA245 /* ContentView.swift */,
+				1DD7D7052C49367400CFA245 /* Assets.xcassets */,
+				1DD7D7072C49367400CFA245 /* Preview Content */,
+			);
+			path = HDBook;
+			sourceTree = "<group>";
+		};
+		1DD7D7072C49367400CFA245 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7D7082C49367400CFA245 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		1DD7D7112C49367500CFA245 /* HDBookTests */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7D7122C49367500CFA245 /* HDBookTests.swift */,
+			);
+			path = HDBookTests;
+			sourceTree = "<group>";
+		};
+		1DD7D71B2C49367500CFA245 /* HDBookUITests */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7D71C2C49367500CFA245 /* HDBookUITests.swift */,
+				1DD7D71E2C49367500CFA245 /* HDBookUITestsLaunchTests.swift */,
+			);
+			path = HDBookUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1DD7D6FD2C49367200CFA245 /* HDBook */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DD7D7222C49367500CFA245 /* Build configuration list for PBXNativeTarget "HDBook" */;
+			buildPhases = (
+				1DD7D6FA2C49367200CFA245 /* Sources */,
+				1DD7D6FB2C49367200CFA245 /* Frameworks */,
+				1DD7D6FC2C49367200CFA245 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HDBook;
+			productName = HDBook;
+			productReference = 1DD7D6FE2C49367200CFA245 /* HDBook.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1DD7D70D2C49367500CFA245 /* HDBookTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DD7D7252C49367500CFA245 /* Build configuration list for PBXNativeTarget "HDBookTests" */;
+			buildPhases = (
+				1DD7D70A2C49367500CFA245 /* Sources */,
+				1DD7D70B2C49367500CFA245 /* Frameworks */,
+				1DD7D70C2C49367500CFA245 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1DD7D7102C49367500CFA245 /* PBXTargetDependency */,
+			);
+			name = HDBookTests;
+			productName = HDBookTests;
+			productReference = 1DD7D70E2C49367500CFA245 /* HDBookTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		1DD7D7172C49367500CFA245 /* HDBookUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DD7D7282C49367500CFA245 /* Build configuration list for PBXNativeTarget "HDBookUITests" */;
+			buildPhases = (
+				1DD7D7142C49367500CFA245 /* Sources */,
+				1DD7D7152C49367500CFA245 /* Frameworks */,
+				1DD7D7162C49367500CFA245 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1DD7D71A2C49367500CFA245 /* PBXTargetDependency */,
+			);
+			name = HDBookUITests;
+			productName = HDBookUITests;
+			productReference = 1DD7D7182C49367500CFA245 /* HDBookUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1DD7D6F62C49367200CFA245 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1530;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					1DD7D6FD2C49367200CFA245 = {
+						CreatedOnToolsVersion = 15.3;
+					};
+					1DD7D70D2C49367500CFA245 = {
+						CreatedOnToolsVersion = 15.3;
+						TestTargetID = 1DD7D6FD2C49367200CFA245;
+					};
+					1DD7D7172C49367500CFA245 = {
+						CreatedOnToolsVersion = 15.3;
+						TestTargetID = 1DD7D6FD2C49367200CFA245;
+					};
+				};
+			};
+			buildConfigurationList = 1DD7D6F92C49367200CFA245 /* Build configuration list for PBXProject "HDBook" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1DD7D6F52C49367200CFA245;
+			productRefGroup = 1DD7D6FF2C49367200CFA245 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1DD7D6FD2C49367200CFA245 /* HDBook */,
+				1DD7D70D2C49367500CFA245 /* HDBookTests */,
+				1DD7D7172C49367500CFA245 /* HDBookUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1DD7D6FC2C49367200CFA245 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DD7D7092C49367400CFA245 /* Preview Assets.xcassets in Resources */,
+				1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DD7D70C2C49367500CFA245 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DD7D7162C49367500CFA245 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1DD7D6FA2C49367200CFA245 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DD7D7042C49367200CFA245 /* ContentView.swift in Sources */,
+				1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DD7D70A2C49367500CFA245 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DD7D7132C49367500CFA245 /* HDBookTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DD7D7142C49367500CFA245 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DD7D71D2C49367500CFA245 /* HDBookUITests.swift in Sources */,
+				1DD7D71F2C49367500CFA245 /* HDBookUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1DD7D7102C49367500CFA245 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1DD7D6FD2C49367200CFA245 /* HDBook */;
+			targetProxy = 1DD7D70F2C49367500CFA245 /* PBXContainerItemProxy */;
+		};
+		1DD7D71A2C49367500CFA245 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1DD7D6FD2C49367200CFA245 /* HDBook */;
+			targetProxy = 1DD7D7192C49367500CFA245 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1DD7D7202C49367500CFA245 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1DD7D7212C49367500CFA245 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1DD7D7232C49367500CFA245 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"HDBook/Preview Content\"";
+				DEVELOPMENT_TEAM = Q898A57MVC;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HD.HDBook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1DD7D7242C49367500CFA245 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"HDBook/Preview Content\"";
+				DEVELOPMENT_TEAM = Q898A57MVC;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HD.HDBook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		1DD7D7262C49367500CFA245 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q898A57MVC;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HD.HDBookTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HDBook.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HDBook";
+			};
+			name = Debug;
+		};
+		1DD7D7272C49367500CFA245 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q898A57MVC;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HD.HDBookTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HDBook.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HDBook";
+			};
+			name = Release;
+		};
+		1DD7D7292C49367500CFA245 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q898A57MVC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HD.HDBookUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HDBook;
+			};
+			name = Debug;
+		};
+		1DD7D72A2C49367500CFA245 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q898A57MVC;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HD.HDBookUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HDBook;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DD7D6F92C49367200CFA245 /* Build configuration list for PBXProject "HDBook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DD7D7202C49367500CFA245 /* Debug */,
+				1DD7D7212C49367500CFA245 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DD7D7222C49367500CFA245 /* Build configuration list for PBXNativeTarget "HDBook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DD7D7232C49367500CFA245 /* Debug */,
+				1DD7D7242C49367500CFA245 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DD7D7252C49367500CFA245 /* Build configuration list for PBXNativeTarget "HDBookTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DD7D7262C49367500CFA245 /* Debug */,
+				1DD7D7272C49367500CFA245 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DD7D7282C49367500CFA245 /* Build configuration list for PBXNativeTarget "HDBookUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DD7D7292C49367500CFA245 /* Debug */,
+				1DD7D72A2C49367500CFA245 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1DD7D6F62C49367200CFA245 /* Project object */;
+}
