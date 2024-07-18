@@ -16,7 +16,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     var videoPlayers: [UUID: AVPlayer] = [:]
     var activeAnchors: [UUID: AnchorEntity] = [:]
     private var trackingTimers: [UUID: Timer] = [:]
-    private var activeAnchor: AnchorEntity? // Declared here
+    private var activeAnchor: AnchorEntity?
 
     @Published var is360ViewActive = false
     private var firebaseStorageService: FirebaseStorageService
@@ -240,6 +240,10 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
                 } else {
                     trackingTimers[imageAnchor.identifier]?.invalidate()
                     startTrackingTimer(for: imageAnchor.identifier)
+                }
+                // Log the name of the image being tracked
+                if let referenceImageName = imageAnchor.referenceImage.name {
+                    print("Tracking image: \(referenceImageName)")
                 }
             }
         }
