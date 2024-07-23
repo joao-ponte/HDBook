@@ -27,8 +27,8 @@ class FirebaseStorageService {
         }
 
         videosDirectory = documentDirectory.appendingPathComponent("Videos")
-        images360Directory = documentDirectory.appendingPathComponent("Images360")
-        imagesDirectory = documentDirectory.appendingPathComponent("Images AR")
+        images360Directory = documentDirectory.appendingPathComponent("360View")
+        imagesDirectory = documentDirectory.appendingPathComponent("AR Images")
 
         createDirectory(at: videosDirectory)
         createDirectory(at: images360Directory)
