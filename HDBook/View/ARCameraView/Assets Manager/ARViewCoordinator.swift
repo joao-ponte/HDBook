@@ -93,38 +93,55 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
 
         print("Image anchor detected: \(referenceImageName)")
 
-        let localVideoURL = firebaseStorageService.getLocalVideoURL(for: referenceImageName)
-        let localImage360URL = firebaseStorageService.getLocalImage360URL(for: referenceImageName)
+        guard let videoURL = getVideoURL(for: referenceImageName),
+              let image360URL = getImage360URL(for: referenceImageName) else {
+            print("No valid asset found for tracked image: \(referenceImageName)")
+            return
+        }
 
-        let videoURL = localVideoURL ?? firebaseStorageService.videosDirectory
-            .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
-            .appendingPathExtension("mp4")
-        
-        let image360URL = localImage360URL ?? firebaseStorageService.images360Directory
-            .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
-            .appendingPathExtension("jpg")
-
-        if FileManager.default.fileExists(atPath: videoURL.path) || localVideoURL != nil {
-            videoURLs[uuid] = videoURL
-
-            if arView != nil {
-                let videoScreen = videoManager.createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
-                placeVideoScreen(videoScreen: videoScreen, imageAnchor: imageAnchor, uuid: uuid)
-                print("Playing video for image: \(referenceImageName)")
-            } else {
-                print("Error: ARView is nil.")
-            }
-        } else if FileManager.default.fileExists(atPath: image360URL.path) || localImage360URL != nil {
-            if let arView = arView, let panoramaView = imageManager.createPanoramaView(for: image360URL, frame: arView.bounds) {
-                placeImage360Screen(panoramaView: panoramaView, imageAnchor: imageAnchor)
-                is360ViewActive = true
-                pauseARSession()
-                print("Presenting 360 view for image: \(referenceImageName)")
-            } else {
-                print("Error: ARView is nil or failed to load image.")
-            }
+        if FileManager.default.fileExists(atPath: videoURL.path) {
+            handleVideoAsset(videoURL: videoURL, imageAnchor: imageAnchor, uuid: uuid, referenceImageName: referenceImageName)
+        } else if FileManager.default.fileExists(atPath: image360URL.path) {
+            handle360ImageAsset(image360URL: image360URL, imageAnchor: imageAnchor, referenceImageName: referenceImageName)
         } else {
             print("No valid asset found for tracked image: \(referenceImageName)")
+        }
+    }
+    
+    private func getVideoURL(for referenceImageName: String) -> URL? {
+        let localVideoURL = firebaseStorageService.getLocalVideoURL(for: referenceImageName)
+        return localVideoURL ?? firebaseStorageService.videosDirectory
+            .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
+            .appendingPathExtension("mp4")
+    }
+
+    private func getImage360URL(for referenceImageName: String) -> URL? {
+        let localImage360URL = firebaseStorageService.getLocalImage360URL(for: referenceImageName)
+        return localImage360URL ?? firebaseStorageService.images360Directory
+            .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
+            .appendingPathExtension("jpg")
+    }
+
+    private func handleVideoAsset(videoURL: URL, imageAnchor: ARImageAnchor, uuid: UUID, referenceImageName: String) {
+        videoURLs[uuid] = videoURL
+
+        if arView != nil {
+            let videoScreen = videoManager.createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
+            placeVideoScreen(videoScreen: videoScreen, imageAnchor: imageAnchor, uuid: uuid)
+            print("Playing video for image: \(referenceImageName)")
+        } else {
+            print("Error: ARView is nil.")
+        }
+    }
+
+    private func handle360ImageAsset(image360URL: URL, imageAnchor: ARImageAnchor, referenceImageName: String) {
+        if let arView = arView, let panoramaView = imageManager.createPanoramaView(for: image360URL, frame: arView.bounds) {
+            placeImage360Screen(panoramaView: panoramaView, imageAnchor: imageAnchor)
+            is360ViewActive = true
+            pauseARSession()
+            print("Presenting 360 view for image: \(referenceImageName)")
+        } else {
+            print("Error: ARView is nil or failed to load image.")
         }
     }
     
@@ -177,6 +194,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     }
 
     // MARK: - ARSessionDelegate
+    
     func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
         let currentTimestamp = Date()
         for anchor in anchors {
@@ -205,7 +223,9 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             }
         }
     }
+
     // MARK: - Additional Functions
+    
     func exit360View() {
         is360ViewActive = false
         removePanoramaView()
