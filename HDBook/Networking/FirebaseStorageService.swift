@@ -62,11 +62,11 @@ class FirebaseStorageService {
     }
 
     func getLocalVideoURL(for referenceImageName: String) -> URL? {
-        return Bundle.main.url(forResource: referenceImageName, withExtension: "mp4", subdirectory: "Videos")
+        return Bundle.main.url(forResource: referenceImageName, withExtension: "mp4", subdirectory: "/Videos.scnassets")
     }
 
     func getLocalImage360URL(for referenceImageName: String) -> URL? {
-        return Bundle.main.url(forResource: referenceImageName, withExtension: "jpg", subdirectory: "360View")
+        return Bundle.main.url(forResource: referenceImageName, withExtension: "jpg", subdirectory: "/360View.scnassets")
     }
 
     func hasNewAssets() async throws -> Bool {
