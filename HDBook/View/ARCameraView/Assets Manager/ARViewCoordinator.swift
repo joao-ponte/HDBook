@@ -93,9 +93,13 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
 
         print("Image anchor detected: \(referenceImageName)")
 
-        guard let videoURL = getVideoURL(for: referenceImageName),
-              let image360URL = getImage360URL(for: referenceImageName) else {
-            print("No valid asset found for tracked image: \(referenceImageName)")
+        guard let videoURL = getVideoURL(for: referenceImageName) else {
+            print("No valid video asset found for tracked image: \(referenceImageName)")
+            return
+        }
+
+        guard let image360URL = getImage360URL(for: referenceImageName) else {
+            print("No valid 360 image asset found for tracked image: \(referenceImageName)")
             return
         }
 
