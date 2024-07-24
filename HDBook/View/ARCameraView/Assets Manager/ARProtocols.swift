@@ -26,6 +26,11 @@ protocol ARVideoHandling {
     func startTrackingTimer(for uuid: UUID)
 }
 
+protocol ARModelHandling {
+    func handleModelAsset(modelURL: URL, imageAnchor: ARImageAnchor, referenceImageName: String)
+    func placeModel(modelEntity: ModelEntity, imageAnchor: ARImageAnchor)
+}
+
 protocol VideoManagement {
     var videoPlayers: [UUID: AVPlayer] { get set }
     func createVideoScreen(width: Float, height: Float, url: URL, uuid: UUID) -> ModelEntity
@@ -35,4 +40,8 @@ protocol VideoManagement {
 
 protocol ImageManagement {
     func createPanoramaView(for image360URL: URL, frame: CGRect) -> CTPanoramaView?
+}
+
+protocol ModelManagement {
+    func loadModel(named modelName: String) async throws -> ModelEntity
 }
