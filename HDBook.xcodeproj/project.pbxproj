@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1D164F872C513B6C004C0F75 /* 360View.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D164F862C513B6C004C0F75 /* 360View.scnassets */; };
 		1D164F892C513B7E004C0F75 /* Videos.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D164F882C513B7E004C0F75 /* Videos.scnassets */; };
+		1D164F8B2C513E63004C0F75 /* VideoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D164F8A2C513E63004C0F75 /* VideoManager.swift */; };
+		1D164F8D2C513E7E004C0F75 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D164F8C2C513E7E004C0F75 /* ImageManager.swift */; };
 		1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7012C49367200CFA245 /* HDBookApp.swift */; };
 		1DD7D7042C49367200CFA245 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7032C49367200CFA245 /* ContentView.swift */; };
 		1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7052C49367400CFA245 /* Assets.xcassets */; };
@@ -56,6 +58,8 @@
 /* Begin PBXFileReference section */
 		1D164F862C513B6C004C0F75 /* 360View.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = 360View.scnassets; sourceTree = "<group>"; };
 		1D164F882C513B7E004C0F75 /* Videos.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Videos.scnassets; sourceTree = "<group>"; };
+		1D164F8A2C513E63004C0F75 /* VideoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoManager.swift; sourceTree = "<group>"; };
+		1D164F8C2C513E7E004C0F75 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 		1DD7D6FE2C49367200CFA245 /* HDBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HDBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7D7012C49367200CFA245 /* HDBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookApp.swift; sourceTree = "<group>"; };
 		1DD7D7032C49367200CFA245 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -111,6 +115,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1D164F8E2C513EEC004C0F75 /* Assets Manager */ = {
+			isa = PBXGroup;
+			children = (
+				1DD7D7322C4952CD00CFA245 /* ARViewCoordinator.swift */,
+				1DD7D7562C495AC900CFA245 /* CTPanoramaCompass.swift */,
+				1D164F8C2C513E7E004C0F75 /* ImageManager.swift */,
+				1D164F8A2C513E63004C0F75 /* VideoManager.swift */,
+			);
+			path = "Assets Manager";
+			sourceTree = "<group>";
+		};
 		1DD7D6F52C49367200CFA245 = {
 			isa = PBXGroup;
 			children = (
@@ -225,9 +240,8 @@
 		1DD7D74C2C4958AC00CFA245 /* ARCameraView */ = {
 			isa = PBXGroup;
 			children = (
-				1DD7D7322C4952CD00CFA245 /* ARViewCoordinator.swift */,
+				1D164F8E2C513EEC004C0F75 /* Assets Manager */,
 				1DD7D7392C4956D600CFA245 /* ARCameraView.swift */,
-				1DD7D7562C495AC900CFA245 /* CTPanoramaCompass.swift */,
 			);
 			path = ARCameraView;
 			sourceTree = "<group>";
@@ -386,12 +400,14 @@
 				1DD7D72C2C4950AE00CFA245 /* AppDelegate.swift in Sources */,
 				1DD7D7552C495A5C00CFA245 /* Fonts.swift in Sources */,
 				1DD7D73A2C4956D600CFA245 /* ARCameraView.swift in Sources */,
+				1D164F8D2C513E7E004C0F75 /* ImageManager.swift in Sources */,
 				1DD7D74A2C49583900CFA245 /* TutorialCards.swift in Sources */,
 				1DD7D7332C4952CE00CFA245 /* ARViewCoordinator.swift in Sources */,
 				1DD7D7462C4957EF00CFA245 /* ModifiedTutorialCardView.swift in Sources */,
 				1DD7D7352C4953DB00CFA245 /* LaunchScreen.swift in Sources */,
 				1DD7D73C2C49570900CFA245 /* TutorialCardsViewModel.swift in Sources */,
 				1DD7D7042C49367200CFA245 /* ContentView.swift in Sources */,
+				1D164F8B2C513E63004C0F75 /* VideoManager.swift in Sources */,
 				1DD7D72E2C49512100CFA245 /* FirebaseStorageService.swift in Sources */,
 				1DD7D73E2C49574E00CFA245 /* TutorialCardView.swift in Sources */,
 				1DD7D7422C4957B000CFA245 /* TutorialView.swift in Sources */,
