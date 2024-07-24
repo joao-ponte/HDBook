@@ -14,7 +14,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     var arView: ARView?
     var videoAnchors: [UUID: Date] = [:]
     var videoPlayers: [UUID: AVPlayer] = [:]
-    var videoURLs: [UUID: URL] = [:] // Add this dictionary to store video URLs
+    var videoURLs: [UUID: URL] = [:]
     var activeAnchors: [UUID: AnchorEntity] = [:]
     private var trackingTimers: [UUID: Timer] = [:]
     private var activeAnchor: AnchorEntity?
@@ -112,9 +112,9 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             .appendingPathExtension("jpg")
 
         if FileManager.default.fileExists(atPath: videoURL.path) {
-            videoURLs[uuid] = videoURL // Store the video URL
+            videoURLs[uuid] = videoURL
 
-            if let arView = arView {
+            if arView != nil {
                 let videoScreen = createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
                 placeVideoScreen(videoScreen: videoScreen, imageAnchor: imageAnchor, uuid: uuid)
                 print("Playing video for image: \(referenceImageName)")
@@ -200,14 +200,12 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         print("Tracking timeout handled for UUID: \(uuid)")
     }
 
-    // Session Did Update
     func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
         let currentTimestamp = Date()
         for anchor in anchors {
             if let imageAnchor = anchor as? ARImageAnchor {
                 let uuid = imageAnchor.identifier
 
-                // Only proceed if this anchor is associated with a video or was previously associated with a video
                 if let videoURL = videoURLs[uuid] {
                     videoAnchors[uuid] = currentTimestamp
                     if activeAnchors[uuid] == nil {
@@ -224,7 +222,6 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             }
         }
 
-        // Check for any anchors that haven't been seen recently and handle timeout
         for (uuid, lastSeen) in videoAnchors {
             if currentTimestamp.timeIntervalSince(lastSeen) > 1 {
                 handleTrackingTimeout(for: uuid)
