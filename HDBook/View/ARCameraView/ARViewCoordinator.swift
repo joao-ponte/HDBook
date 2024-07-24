@@ -14,6 +14,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     var arView: ARView?
     var videoAnchors: [UUID: Date] = [:]
     var videoPlayers: [UUID: AVPlayer] = [:]
+    var videoURLs: [UUID: URL] = [:] // Add this dictionary to store video URLs
     var activeAnchors: [UUID: AnchorEntity] = [:]
     private var trackingTimers: [UUID: Timer] = [:]
     private var activeAnchor: AnchorEntity?
@@ -26,12 +27,11 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     }
 
     func configureARView(_ arView: ARView) async {
+        self.arView = arView
+        await arView.session.delegate = self
         do {
             let configuration = try createARConfiguration()
-            await arView.session.delegate = self
             await arView.session.run(configuration)
-            self.arView = arView
-            print("ARView configured and session started.")
         } catch {
             print("Failed to configure ARView: \(error)")
         }
@@ -60,7 +60,6 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         print("All video players paused.")
     }
 
-    // Resume All Video Players
     func resumeAllVideoPlayers() {
         for player in videoPlayers.values {
             player.play()
@@ -69,36 +68,23 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     }
 
     func removeAllAnchors() async {
-        for anchor in activeAnchors.values {
+        if let anchor = activeAnchor {
             await arView?.scene.removeAnchor(anchor)
         }
-        activeAnchors.removeAll()
-        stopAndRemoveAllVideoPlayers()
-        await resetARTracking()
-        print("All anchors removed.")
-    }
-
-    private func resetARTracking() async {
-        guard let arView = arView else { return }
-        do {
-            let configuration = try createARConfiguration()
-            await arView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-            print("AR tracking reset.")
-        } catch {
-            print("Failed to reset AR tracking: \(error)")
-        }
+        activeAnchor = nil
     }
 
     private func createARConfiguration() throws -> ARImageTrackingConfiguration {
         let configuration = ARImageTrackingConfiguration()
         let referenceImages = firebaseStorageService.getARReferenceImages()
         configuration.trackingImages = Set(referenceImages)
-        configuration.maximumNumberOfTrackedImages = 1 // Track only one image at a time
-        print("AR configuration created with \(referenceImages.count) reference images.")
+        configuration.maximumNumberOfTrackedImages = 1
         return configuration
     }
 
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
+        guard !is360ViewActive else { return }
+        
         for anchor in anchors {
             if let imageAnchor = anchor as? ARImageAnchor {
                 handleImageAnchor(imageAnchor)
@@ -126,6 +112,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             .appendingPathExtension("jpg")
 
         if FileManager.default.fileExists(atPath: videoURL.path) {
+            videoURLs[uuid] = videoURL // Store the video URL
+
             if let arView = arView {
                 let videoScreen = createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
                 placeVideoScreen(videoScreen: videoScreen, imageAnchor: imageAnchor, uuid: uuid)
@@ -217,19 +205,26 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         let currentTimestamp = Date()
         for anchor in anchors {
             if let imageAnchor = anchor as? ARImageAnchor {
-                videoAnchors[imageAnchor.identifier] = currentTimestamp
-                if activeAnchors[imageAnchor.identifier] == nil {
-                    handleImageAnchor(imageAnchor)
-                } else {
-                    trackingTimers[imageAnchor.identifier]?.invalidate()
-                    startTrackingTimer(for: imageAnchor.identifier)
-                }
-                if let referenceImageName = imageAnchor.referenceImage.name {
-                    print("Tracking image: \(referenceImageName)")
+                let uuid = imageAnchor.identifier
+
+                // Only proceed if this anchor is associated with a video or was previously associated with a video
+                if let videoURL = videoURLs[uuid] {
+                    videoAnchors[uuid] = currentTimestamp
+                    if activeAnchors[uuid] == nil {
+                        let videoScreen = createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
+                        placeVideoScreen(videoScreen: videoScreen, imageAnchor: imageAnchor, uuid: uuid)
+                    } else {
+                        trackingTimers[uuid]?.invalidate()
+                        startTrackingTimer(for: uuid)
+                    }
+                    if let referenceImageName = imageAnchor.referenceImage.name {
+                        print("Tracking image: \(referenceImageName)")
+                    }
                 }
             }
         }
 
+        // Check for any anchors that haven't been seen recently and handle timeout
         for (uuid, lastSeen) in videoAnchors {
             if currentTimestamp.timeIntervalSince(lastSeen) > 1 {
                 handleTrackingTimeout(for: uuid)
