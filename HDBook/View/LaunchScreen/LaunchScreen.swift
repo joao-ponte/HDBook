@@ -141,7 +141,7 @@ struct LaunchScreen: View {
         Task {
             isLoading = true
             do {
-                try await reachability.startNotifier()
+                try reachability.startNotifier()
                 isOffline = reachability.connection == .unavailable
                 if isOffline {
                     convertLocalImages()
