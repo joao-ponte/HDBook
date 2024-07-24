@@ -55,14 +55,6 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         print("AR session paused.")
     }
 
-    func pauseAllVideoPlayers() {
-        videoManager.pauseAllVideoPlayers()
-    }
-
-    func resumeAllVideoPlayers() {
-        videoManager.resumeAllVideoPlayers()
-    }
-
     func removeAllAnchors() async {
         if let anchor = activeAnchor {
             await arView?.scene.removeAnchor(anchor)

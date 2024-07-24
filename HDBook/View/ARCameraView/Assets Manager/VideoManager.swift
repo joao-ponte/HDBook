@@ -39,27 +39,4 @@ class VideoManager {
         print("Video material created for UUID: \(uuid)")
         return videoMaterial
     }
-
-    func pauseAllVideoPlayers() {
-        for player in videoPlayers.values {
-            player.pause()
-        }
-        print("All video players paused.")
-    }
-
-    func resumeAllVideoPlayers() {
-        for player in videoPlayers.values {
-            player.play()
-        }
-        print("All video players resumed.")
-    }
-
-    func stopAndRemoveAllVideoPlayers() {
-        for (uuid, player) in videoPlayers {
-            player.pause()
-            player.replaceCurrentItem(with: nil)
-        }
-        videoPlayers.removeAll()
-        print("All video players stopped and removed.")
-    }
 }
