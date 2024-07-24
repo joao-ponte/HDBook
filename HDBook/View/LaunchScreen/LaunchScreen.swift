@@ -20,11 +20,11 @@ struct LaunchScreen: View {
     @State private var isLoading = false
     @EnvironmentObject var coordinator: ARViewCoordinator
     private let reachability = try! Reachability()
-
+    
     init(viewModel: TutorialCardsViewModel) {
         self.viewModel = viewModel
     }
-
+    
     var body: some View {
         NavigationView {
             GeometryReader {geometry in
@@ -33,24 +33,24 @@ struct LaunchScreen: View {
                     VStack {
                         Spacer()
                         Spacer()
-
+                        
                         Image("Logotype")
                             .resizable()
                             .scaledToFit()
                             .padding(.horizontal, geometry.size.width * 0.09)
-
+                        
                         Text("HD Book")
                             .font(.custom("CaslonDoric-Medium", size: geometry.size.width * 0.06))
                             .foregroundColor(.white)
                             .padding(.top, geometry.size.height * 0.009)
-
+                        
                         Spacer()
                         Spacer()
                         Spacer()
                     }
                     VStack {
                         Spacer()
-
+                        
                         if isLoading {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
@@ -79,7 +79,7 @@ struct LaunchScreen: View {
         .toolbar(.hidden, for: .navigationBar)
         .navigationViewStyle(.stack)
     }
-
+    
     private var downloadPromptView: some View {
         VStack {
             Text("""
@@ -91,7 +91,7 @@ struct LaunchScreen: View {
             .multilineTextAlignment(.center)
             .lineSpacing(6)
             .padding()
-
+            
             HStack {
                 Spacer()
                 Button(action: convertLocalImages) {
@@ -122,7 +122,7 @@ struct LaunchScreen: View {
         }
         .padding(.bottom, 56)
     }
-
+    
     private var launchButton: some View {
         NavigationLink(destination: isFirstLaunch ? AnyView(TutorialView(viewModel: TutorialCardsViewModel())) : AnyView(ARCameraView().environmentObject(coordinator))) {
             Text("Launch")
@@ -136,12 +136,12 @@ struct LaunchScreen: View {
         }
         .padding(.bottom, 56)
     }
-
+    
     private func checkInternetConnection() {
         Task {
             isLoading = true
             do {
-                try await reachability.startNotifier()
+                try reachability.startNotifier()
                 isOffline = reachability.connection == .unavailable
                 if isOffline {
                     convertLocalImages()
@@ -162,7 +162,7 @@ struct LaunchScreen: View {
             }
         }
     }
-
+    
     private func startDownload() {
         isDownloading = true
         Task {
@@ -175,15 +175,9 @@ struct LaunchScreen: View {
                 DispatchQueue.main.async {
                     convertLocalImages()
                 }
-            } catch {
-                DispatchQueue.main.async {
-                    isDownloading = false
-                    showDownloadPrompt = false
-                }
-            }
-        }
+            }        }
     }
-
+    
     private func convertLocalImages() {
         Task {
             FirebaseStorageService.shared.createARReferenceImages()

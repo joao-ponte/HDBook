@@ -33,6 +33,9 @@ class FirebaseStorageService {
         createDirectory(at: videosDirectory)
         createDirectory(at: images360Directory)
         createDirectory(at: imagesDirectory)
+        
+        loadLocalARReferenceImages()
+        createARReferenceImages()
     }
 
     private func createDirectory(at url: URL) {
@@ -47,6 +50,23 @@ class FirebaseStorageService {
         } else {
             print("Directory already exists at: \(url.path)")
         }
+    }
+    
+    func loadLocalARReferenceImages() {
+        if let referenceImages = ARReferenceImage.referenceImages(inGroupNamed: "AR Resources", bundle: Bundle.main) {
+            arReferenceImages.append(contentsOf: referenceImages)
+            print("Loaded local AR reference images.")
+        } else {
+            print("No local AR reference images found.")
+        }
+    }
+
+    func getLocalVideoURL(for referenceImageName: String) -> URL? {
+        return Bundle.main.url(forResource: referenceImageName, withExtension: "mp4", subdirectory: "/Videos.scnassets")
+    }
+
+    func getLocalImage360URL(for referenceImageName: String) -> URL? {
+        return Bundle.main.url(forResource: referenceImageName, withExtension: "jpg", subdirectory: "/360View.scnassets")
     }
 
     func hasNewAssets() async throws -> Bool {
@@ -242,6 +262,7 @@ class FirebaseStorageService {
         } catch {
             print("Error reading files in directory \(imagesDirectory.path): \(error)")
         }
+        loadLocalARReferenceImages() // Ensure local images are also added
         print("Total ARReferenceImages created: \(arReferenceImages.count)")  // Debug log
     }
 

@@ -1,0 +1,17 @@
+{
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "resources" : [
+    {
+      "filename" : "CONNAUGHT_360-29.arreferenceimage"
+    },
+    {
+      "filename" : "coventgarden_CIN-29.arreferenceimage"
+    },
+    {
+      "filename" : "KP600_CIN-19.arreferenceimage"
+    }
+  ]
+}
