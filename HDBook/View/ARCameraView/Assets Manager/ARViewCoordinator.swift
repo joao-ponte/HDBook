@@ -27,7 +27,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         self.videoManager = videoManager
         self.imageManager = imageManager
     }
-
+    
+    // MARK: - ARSessionManagement
     func configureARView(_ arView: ARView) async {
         self.arView = arView
         await arView.session.delegate = self
@@ -78,6 +79,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             }
         }
     }
+    
+    // MARK: - ARImageHandling
 
     internal func handleImageAnchor(_ imageAnchor: ARImageAnchor) {
         let uuid = imageAnchor.identifier
@@ -124,6 +127,22 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             print("No valid asset found for tracked image: \(referenceImageName)")
         }
     }
+    
+    internal func placeImage360Screen(panoramaView: CTPanoramaView, imageAnchor: ARImageAnchor) {
+        guard let arView = arView else { return }
+
+        if let currentView = arView.subviews.first(where: { $0 is CTPanoramaView }) {
+            currentView.removeFromSuperview()
+        }
+
+        arView.addSubview(panoramaView)
+
+        activeAnchor = AnchorEntity(anchor: imageAnchor)
+        arView.scene.addAnchor(activeAnchor!)
+        print("360 image screen placed for image anchor: \(imageAnchor.referenceImage.name ?? "")")
+    }
+    
+    // MARK: - ARVideoHandling
 
     internal func placeVideoScreen(videoScreen: ModelEntity, imageAnchor: ARImageAnchor, uuid: UUID) {
         guard let arView = arView else { return }
@@ -157,6 +176,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         print("Tracking timeout handled for UUID: \(uuid)")
     }
 
+    // MARK: - ARSessionDelegate
     func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
         let currentTimestamp = Date()
         for anchor in anchors {
@@ -185,21 +205,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             }
         }
     }
-
-    internal func placeImage360Screen(panoramaView: CTPanoramaView, imageAnchor: ARImageAnchor) {
-        guard let arView = arView else { return }
-
-        if let currentView = arView.subviews.first(where: { $0 is CTPanoramaView }) {
-            currentView.removeFromSuperview()
-        }
-
-        arView.addSubview(panoramaView)
-
-        activeAnchor = AnchorEntity(anchor: imageAnchor)
-        arView.scene.addAnchor(activeAnchor!)
-        print("360 image screen placed for image anchor: \(imageAnchor.referenceImage.name ?? "")")
-    }
-
+    // MARK: - Additional Functions
     func exit360View() {
         is360ViewActive = false
         removePanoramaView()
