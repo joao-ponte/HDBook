@@ -103,15 +103,19 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
 
         print("Image anchor detected: \(referenceImageName)")
 
-        let videoURL = firebaseStorageService.videosDirectory
+        // Try to get URLs from local bundle first
+        let localVideoURL = firebaseStorageService.getLocalVideoURL(for: referenceImageName)
+        let localImage360URL = firebaseStorageService.getLocalImage360URL(for: referenceImageName)
+
+        let videoURL = localVideoURL ?? firebaseStorageService.videosDirectory
             .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
             .appendingPathExtension("mp4")
         
-        let image360URL = firebaseStorageService.images360Directory
+        let image360URL = localImage360URL ?? firebaseStorageService.images360Directory
             .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
             .appendingPathExtension("jpg")
 
-        if FileManager.default.fileExists(atPath: videoURL.path) {
+        if FileManager.default.fileExists(atPath: videoURL.path) || localVideoURL != nil {
             videoURLs[uuid] = videoURL
 
             if arView != nil {
@@ -121,7 +125,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             } else {
                 print("Error: ARView is nil.")
             }
-        } else if FileManager.default.fileExists(atPath: image360URL.path) {
+        } else if FileManager.default.fileExists(atPath: image360URL.path) || localImage360URL != nil {
             if let arView = arView, let image = UIImage(contentsOfFile: image360URL.path) {
                 let panoramaView = CTPanoramaView(frame: arView.bounds, image: image)
                 panoramaView.controlMethod = .both
@@ -269,5 +273,13 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             panoramaView.removeFromSuperview()
         }
         print("Panorama view removed.")
+    }
+    
+    func loadARReferenceImages() async {
+        await firebaseStorageService.downloadFiles(progress: { progress in
+            print("Download progress: \(progress)")
+        })
+        firebaseStorageService.createARReferenceImages()
+        print("AR reference images loaded.")
     }
 }
