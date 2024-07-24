@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ImageManager {
+class ImageManager: ImageManagement {
     func createPanoramaView(for image360URL: URL, frame: CGRect) -> CTPanoramaView? {
         guard let image = UIImage(contentsOfFile: image360URL.path) else {
             print("Failed to load image from \(image360URL.path)")

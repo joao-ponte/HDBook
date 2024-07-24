@@ -8,9 +8,9 @@
 import AVKit
 import RealityKit
 
-class VideoManager {
+class VideoManager: VideoManagement {
     var videoPlayers: [UUID: AVPlayer] = [:]
-    
+
     func createVideoScreen(width: Float, height: Float, url: URL, uuid: UUID) -> ModelEntity {
         let screenMesh = MeshResource.generatePlane(width: width, height: height)
         let videoItem = createVideoItem(with: url)
@@ -19,12 +19,12 @@ class VideoManager {
         return videoScreenModel
     }
 
-    private func createVideoItem(with url: URL) -> AVPlayerItem {
+    func createVideoItem(with url: URL) -> AVPlayerItem {
         let asset = AVURLAsset(url: url)
         return AVPlayerItem(asset: asset)
     }
 
-    private func createVideoMaterial(with videoItem: AVPlayerItem, uuid: UUID) -> VideoMaterial {
+    func createVideoMaterial(with videoItem: AVPlayerItem, uuid: UUID) -> VideoMaterial {
         let player = AVPlayer()
         player.actionAtItemEnd = .none
         let videoMaterial = VideoMaterial(avPlayer: player)
@@ -40,3 +40,4 @@ class VideoManager {
         return videoMaterial
     }
 }
+
