@@ -8,22 +8,24 @@
 import SwiftUI
 import RealityKit
 import ARKit
-import AVKit
 
 class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     var arView: ARView?
     var videoAnchors: [UUID: Date] = [:]
-    var videoPlayers: [UUID: AVPlayer] = [:]
     var videoURLs: [UUID: URL] = [:]
     var activeAnchors: [UUID: AnchorEntity] = [:]
     private var trackingTimers: [UUID: Timer] = [:]
     private var activeAnchor: AnchorEntity?
+    private var videoManager: VideoManager
+    private var imageManager: ImageManager
 
     @Published var is360ViewActive = false
     private var firebaseStorageService: FirebaseStorageService
 
-    init(firebaseStorageService: FirebaseStorageService) {
+    init(firebaseStorageService: FirebaseStorageService, videoManager: VideoManager = VideoManager(), imageManager: ImageManager = ImageManager()) {
         self.firebaseStorageService = firebaseStorageService
+        self.videoManager = videoManager
+        self.imageManager = imageManager
     }
 
     func configureARView(_ arView: ARView) async {
@@ -54,17 +56,11 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     }
 
     func pauseAllVideoPlayers() {
-        for player in videoPlayers.values {
-            player.pause()
-        }
-        print("All video players paused.")
+        videoManager.pauseAllVideoPlayers()
     }
 
     func resumeAllVideoPlayers() {
-        for player in videoPlayers.values {
-            player.play()
-        }
-        print("All video players resumed.")
+        videoManager.resumeAllVideoPlayers()
     }
 
     func removeAllAnchors() async {
@@ -84,7 +80,6 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
 
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
         guard !is360ViewActive else { return }
-        
         for anchor in anchors {
             if let imageAnchor = anchor as? ARImageAnchor {
                 handleImageAnchor(imageAnchor)
@@ -103,7 +98,6 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
 
         print("Image anchor detected: \(referenceImageName)")
 
-        // Try to get URLs from local bundle first
         let localVideoURL = firebaseStorageService.getLocalVideoURL(for: referenceImageName)
         let localImage360URL = firebaseStorageService.getLocalImage360URL(for: referenceImageName)
 
@@ -119,18 +113,15 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
             videoURLs[uuid] = videoURL
 
             if arView != nil {
-                let videoScreen = createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
+                let videoScreen = videoManager.createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
                 placeVideoScreen(videoScreen: videoScreen, imageAnchor: imageAnchor, uuid: uuid)
                 print("Playing video for image: \(referenceImageName)")
             } else {
                 print("Error: ARView is nil.")
             }
         } else if FileManager.default.fileExists(atPath: image360URL.path) || localImage360URL != nil {
-            if let arView = arView, let image = UIImage(contentsOfFile: image360URL.path) {
-                let panoramaView = CTPanoramaView(frame: arView.bounds, image: image)
-                panoramaView.controlMethod = .both
+            if let arView = arView, let panoramaView = imageManager.createPanoramaView(for: image360URL, frame: arView.bounds) {
                 placeImage360Screen(panoramaView: panoramaView, imageAnchor: imageAnchor)
-
                 is360ViewActive = true
                 pauseARSession()
                 print("Presenting 360 view for image: \(referenceImageName)")
@@ -157,36 +148,6 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         print("Video screen placed for UUID: \(uuid)")
     }
 
-    private func createVideoScreen(width: Float, height: Float, url: URL, uuid: UUID) -> ModelEntity {
-        let screenMesh = MeshResource.generatePlane(width: width, height: height)
-        let videoItem = createVideoItem(with: url)
-        let videoMaterial = createVideoMaterial(with: videoItem, uuid: uuid)
-        let videoScreenModel = ModelEntity(mesh: screenMesh, materials: [videoMaterial])
-        return videoScreenModel
-    }
-
-    private func createVideoItem(with url: URL) -> AVPlayerItem {
-        let asset = AVURLAsset(url: url)
-        let videoItem = AVPlayerItem(asset: asset)
-        return videoItem
-    }
-
-    private func createVideoMaterial(with videoItem: AVPlayerItem, uuid: UUID) -> VideoMaterial {
-        let player = AVPlayer()
-        player.actionAtItemEnd = .none
-        let videoMaterial = VideoMaterial(avPlayer: player)
-        player.replaceCurrentItem(with: videoItem)
-        player.play()
-
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
-            player.seek(to: .zero)
-            player.play()
-        }
-        videoPlayers[uuid] = player
-        print("Video material created for UUID: \(uuid)")
-        return videoMaterial
-    }
-
     private func startTrackingTimer(for uuid: UUID) {
         trackingTimers[uuid] = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { [weak self] _ in
             self?.handleTrackingTimeout(for: uuid)
@@ -195,11 +156,11 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
     }
 
     private func handleTrackingTimeout(for uuid: UUID) {
-        guard let anchor = activeAnchors[uuid], let player = videoPlayers[uuid] else { return }
+        guard let anchor = activeAnchors[uuid], let player = videoManager.videoPlayers[uuid] else { return }
         player.pause()
         arView?.scene.removeAnchor(anchor)
         activeAnchors.removeValue(forKey: uuid)
-        videoPlayers.removeValue(forKey: uuid)
+        videoManager.videoPlayers.removeValue(forKey: uuid)
         trackingTimers.removeValue(forKey: uuid)
         print("Tracking timeout handled for UUID: \(uuid)")
     }
@@ -213,7 +174,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
                 if let videoURL = videoURLs[uuid] {
                     videoAnchors[uuid] = currentTimestamp
                     if activeAnchors[uuid] == nil {
-                        let videoScreen = createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
+                        let videoScreen = videoManager.createVideoScreen(width: Float(imageAnchor.referenceImage.physicalSize.width), height: Float(imageAnchor.referenceImage.physicalSize.height), url: videoURL, uuid: uuid)
                         placeVideoScreen(videoScreen: videoScreen, imageAnchor: imageAnchor, uuid: uuid)
                     } else {
                         trackingTimers[uuid]?.invalidate()
@@ -231,16 +192,6 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
                 handleTrackingTimeout(for: uuid)
             }
         }
-    }
-
-    private func stopAndRemoveAllVideoPlayers() {
-        for (uuid, player) in videoPlayers {
-            player.pause()
-            player.replaceCurrentItem(with: nil)
-            videoPlayers[uuid] = nil
-        }
-        videoPlayers.removeAll()
-        print("All video players stopped and removed.")
     }
 
     private func placeImage360Screen(panoramaView: CTPanoramaView, imageAnchor: ARImageAnchor) {
