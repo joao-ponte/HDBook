@@ -13,6 +13,7 @@ class FirebaseStorageService {
     private let storage: Storage
     let videosDirectory: URL
     let images360Directory: URL
+    let modelsDirectory: URL
     private let imagesDirectory: URL
     private(set) var arReferenceImages: [ARReferenceImage] = []
 
@@ -28,10 +29,12 @@ class FirebaseStorageService {
 
         videosDirectory = documentDirectory.appendingPathComponent("Videos")
         images360Directory = documentDirectory.appendingPathComponent("360View")
+        modelsDirectory = documentDirectory.appendingPathComponent("3DModels")
         imagesDirectory = documentDirectory.appendingPathComponent("AR Images")
 
         createDirectory(at: videosDirectory)
         createDirectory(at: images360Directory)
+        createDirectory(at: modelsDirectory)
         createDirectory(at: imagesDirectory)
         
         loadLocalARReferenceImages()
@@ -68,6 +71,10 @@ class FirebaseStorageService {
     func getLocalImage360URL(for referenceImageName: String) -> URL? {
         return Bundle.main.url(forResource: referenceImageName, withExtension: "jpg", subdirectory: "/360View.scnassets")
     }
+    
+    func getLocalModelURL(for referenceImageName: String) -> URL? {
+        return Bundle.main.url(forResource: referenceImageName, withExtension: "usdz", subdirectory: "3DModels")
+    }
 
     func hasNewAssets() async throws -> Bool {
         let videoRef = storage.reference(withPath: "Videos")
@@ -102,40 +109,47 @@ class FirebaseStorageService {
     }
 
     func downloadFiles(progress: @escaping (Float) -> Void) async {
-        var totalFiles: Int = 0
-        var downloadedFiles: Int = 0
-        var newImagesDownloaded = false
+           var totalFiles: Int = 0
+           var downloadedFiles: Int = 0
+           var newImagesDownloaded = false
 
-        do {
-            let videoResult = try await storage.reference(withPath: "Videos").listAll()
-            totalFiles += videoResult.items.count
-            let image360Result = try await storage.reference(withPath: "360View").listAll()
-            totalFiles += image360Result.items.count
-            let imageResult = try await storage.reference().child("AR Images").listAll()
-            totalFiles += imageResult.items.count
-        } catch {
-            print("Error counting files: \(error)")
-        }
+           do {
+               let videoResult = try await storage.reference(withPath: "Videos").listAll()
+               totalFiles += videoResult.items.count
+               let image360Result = try await storage.reference(withPath: "360View").listAll()
+               totalFiles += image360Result.items.count
+               let imageResult = try await storage.reference().child("AR Images").listAll()
+               totalFiles += imageResult.items.count
+               let modelResult = try await storage.reference(withPath: "3DModels").listAll()
+               totalFiles += modelResult.items.count
+           } catch {
+               print("Error counting files: \(error)")
+           }
 
-        await downloadVideos(progress: { downloaded in
-            downloadedFiles += 1
-            progress(Float(downloadedFiles) / Float(totalFiles))
-        })
+           await downloadVideos(progress: { downloaded in
+               downloadedFiles += 1
+               progress(Float(downloadedFiles) / Float(totalFiles))
+           })
 
-        await downloadImages360(progress: { downloaded in
-            downloadedFiles += 1
-            progress(Float(downloadedFiles) / Float(totalFiles))
-        })
+           await downloadImages360(progress: { downloaded in
+               downloadedFiles += 1
+               progress(Float(downloadedFiles) / Float(totalFiles))
+           })
 
-        newImagesDownloaded = await downloadImages(progress: { downloaded in
-            downloadedFiles += 1
-            progress(Float(downloadedFiles) / Float(totalFiles))
-        })
+           newImagesDownloaded = await downloadImages(progress: { downloaded in
+               downloadedFiles += 1
+               progress(Float(downloadedFiles) / Float(totalFiles))
+           })
 
-        if newImagesDownloaded {
-            createARReferenceImages()
-        }
-    }
+           await downloadModels(progress: { downloaded in
+               downloadedFiles += 1
+               progress(Float(downloadedFiles) / Float(totalFiles))
+           })
+
+           if newImagesDownloaded {
+               createARReferenceImages()
+           }
+       }
 
     private func downloadVideos(progress: @escaping (Int) -> Void) async {
         let videoRef = storage.reference(withPath: "Videos")
@@ -166,6 +180,22 @@ class FirebaseStorageService {
             }
         } catch {
             print("Error listing or downloading images360: \(error)")
+        }
+    }
+    
+    private func downloadModels(progress: @escaping (Int) -> Void) async {
+        let modelRef = storage.reference(withPath: "3DModels")
+        do {
+            let result = try await modelRef.listAll()
+            for item in result.items {
+                let localURL = self.modelsDirectory.appendingPathComponent(item.name)
+                if !FileManager.default.fileExists(atPath: localURL.path) {
+                    try await downloadFileAsync(from: item, to: localURL)
+                    progress(1)
+                }
+            }
+        } catch {
+            print("Error listing or downloading models: \(error)")
         }
     }
 
