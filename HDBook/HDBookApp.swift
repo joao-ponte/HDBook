@@ -12,10 +12,17 @@ struct HDBookApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
+    @StateObject private var arViewCoordinator = ARViewCoordinator(firebaseStorageService: FirebaseStorageService.shared)
+
     var body: some Scene {
         WindowGroup {
             LaunchScreen(viewModel: TutorialCardsViewModel())
-                .environmentObject(ARViewCoordinator(firebaseStorageService: FirebaseStorageService.shared))
+                .environmentObject(arViewCoordinator)
+                .onAppear {
+                    Task {
+                        await arViewCoordinator.loadARReferenceImages()
+                    }
+                }
         }
     }
 }
