@@ -9,7 +9,7 @@ import SwiftUI
 import RealityKit
 import ARKit
 
-class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
+class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessionManagement, ARImageHandling, ARVideoHandling {
     var arView: ARView?
     var videoAnchors: [UUID: Date] = [:]
     var videoURLs: [UUID: URL] = [:]
@@ -79,7 +79,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         }
     }
 
-    private func handleImageAnchor(_ imageAnchor: ARImageAnchor) {
+    internal func handleImageAnchor(_ imageAnchor: ARImageAnchor) {
         let uuid = imageAnchor.identifier
         videoAnchors[uuid] = Date()
 
@@ -125,7 +125,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         }
     }
 
-    private func placeVideoScreen(videoScreen: ModelEntity, imageAnchor: ARImageAnchor, uuid: UUID) {
+    internal func placeVideoScreen(videoScreen: ModelEntity, imageAnchor: ARImageAnchor, uuid: UUID) {
         guard let arView = arView else { return }
 
         let imageAnchorEntity = AnchorEntity(anchor: imageAnchor)
@@ -140,14 +140,14 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         print("Video screen placed for UUID: \(uuid)")
     }
 
-    private func startTrackingTimer(for uuid: UUID) {
+    internal func startTrackingTimer(for uuid: UUID) {
         trackingTimers[uuid] = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { [weak self] _ in
             self?.handleTrackingTimeout(for: uuid)
         }
         print("Tracking timer started for UUID: \(uuid)")
     }
 
-    private func handleTrackingTimeout(for uuid: UUID) {
+    internal func handleTrackingTimeout(for uuid: UUID) {
         guard let anchor = activeAnchors[uuid], let player = videoManager.videoPlayers[uuid] else { return }
         player.pause()
         arView?.scene.removeAnchor(anchor)
@@ -186,7 +186,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject {
         }
     }
 
-    private func placeImage360Screen(panoramaView: CTPanoramaView, imageAnchor: ARImageAnchor) {
+    internal func placeImage360Screen(panoramaView: CTPanoramaView, imageAnchor: ARImageAnchor) {
         guard let arView = arView else { return }
 
         if let currentView = arView.subviews.first(where: { $0 is CTPanoramaView }) {
