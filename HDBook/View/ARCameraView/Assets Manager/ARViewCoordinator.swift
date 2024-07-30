@@ -252,14 +252,24 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         guard let arView = arView else { return }
 
         let imageAnchorEntity = AnchorEntity(anchor: imageAnchor)
-        modelEntity.setPosition(SIMD3<Float>(0, 0, 0), relativeTo: imageAnchorEntity)
-        imageAnchorEntity.addChild(modelEntity)
 
+        // Set the model's position to be closer to the origin of the image anchor
+        modelEntity.setPosition(SIMD3<Float>(0, 0.10, 0), relativeTo: imageAnchorEntity)
+
+        // Optionally adjust the scale if needed
+        modelEntity.scale = [0.01, 0.01, 0.01]  // Example: scaling down the model
+
+        // Apply rotation to the model around the z-axis by 90 degrees
+        let rotation = simd_quatf(angle: GLKMathDegreesToRadians(90), axis: SIMD3<Float>(1, 0, 0))
+        modelEntity.setOrientation(rotation, relativeTo: imageAnchorEntity)
+
+        imageAnchorEntity.addChild(modelEntity)
         arView.scene.addAnchor(imageAnchorEntity)
         activeAnchors[uuid] = imageAnchorEntity
 
         startTrackingTimer(for: uuid)
         print("3D model placed for UUID: \(uuid)")
+        print("Model entity's final position: \(modelEntity.position)")
     }
     
     // MARK: - ARSessionDelegate
@@ -282,6 +292,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
                     if let referenceImageName = imageAnchor.referenceImage.name {
                         print("Tracking image: \(referenceImageName)")
                     }
+                } else if activeAnchors[uuid] == nil {
+                    // Handle newly detected anchors for 3D models and 360 images if needed
                 }
             }
         }
