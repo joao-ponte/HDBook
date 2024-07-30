@@ -64,6 +64,7 @@
 		1D164F8C2C513E7E004C0F75 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 		1D164F912C5144A8004C0F75 /* ARProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARProtocols.swift; sourceTree = "<group>"; };
 		1D164F932C515F9B004C0F75 /* ModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelManager.swift; sourceTree = "<group>"; };
+		1D164F9B2C58E4DD004C0F75 /* 3DModels.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = 3DModels.scnassets; sourceTree = "<group>"; };
 		1DD7D6FE2C49367200CFA245 /* HDBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HDBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7D7012C49367200CFA245 /* HDBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookApp.swift; sourceTree = "<group>"; };
 		1DD7D7032C49367200CFA245 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -166,6 +167,7 @@
 				1DD7D74D2C4958D800CFA245 /* Helpers */,
 				1DD7D7502C49597E00CFA245 /* Assets Files */,
 				1DD7D7072C49367400CFA245 /* Preview Content */,
+				1D164F9B2C58E4DD004C0F75 /* 3DModels.scnassets */,
 				1D164F862C513B6C004C0F75 /* 360View.scnassets */,
 				1D164F882C513B7E004C0F75 /* Videos.scnassets */,
 			);
