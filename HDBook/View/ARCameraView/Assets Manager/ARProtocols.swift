@@ -43,5 +43,5 @@ protocol ImageManagement {
 }
 
 protocol ModelManagement {
-    func loadModel(named modelName: String) async throws -> ModelEntity
+    func loadModel(from url: URL) throws -> ModelEntity
 }
