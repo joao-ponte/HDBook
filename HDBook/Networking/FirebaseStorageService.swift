@@ -73,39 +73,51 @@ class FirebaseStorageService {
     }
     
     func getLocalModelURL(for referenceImageName: String) -> URL? {
-        return Bundle.main.url(forResource: referenceImageName, withExtension: "usdz", subdirectory: "3DModels")
+        return Bundle.main.url(forResource: referenceImageName, withExtension: "usdz", subdirectory: "/3DModels.scnassets")
     }
 
     func hasNewAssets() async throws -> Bool {
         let videoRef = storage.reference(withPath: "Videos")
         let image360Ref = storage.reference(withPath: "360View")
         let imageRef = storage.reference().child("AR Images")
+        let ModelsRef = storage.reference().child("3DModels")
 
         let localVideoFiles = try FileManager.default.contentsOfDirectory(atPath: videosDirectory.path)
         let localImage360Files = try FileManager.default.contentsOfDirectory(atPath: images360Directory.path)
         let localImageFiles = try FileManager.default.contentsOfDirectory(atPath: imagesDirectory.path)
+        let local3DModelsFiles = try FileManager.default.contentsOfDirectory(atPath: modelsDirectory.path)
 
         print("Local video files: \(localVideoFiles)")
         print("Local 360 image files: \(localImage360Files)")
         print("Local AR image files: \(localImageFiles)")
+        print("Local 3DModels files: \(local3DModelsFiles)")
+
 
         let remoteVideoFiles = try await videoRef.listAll().items.map { $0.name }
         let remoteImage360Files = try await image360Ref.listAll().items.map { $0.name }
         let remoteImageFiles = try await imageRef.listAll().items.map { $0.name }
+        let remote3DModelsFiles = try await ModelsRef.listAll().items.map { $0.name }
+
 
         print("Remote video files: \(remoteVideoFiles)")
         print("Remote 360 image files: \(remoteImage360Files)")
         print("Remote AR image files: \(remoteImageFiles)")
+        print("Remote 3D Models files: \(remote3DModelsFiles)")
+
 
         let newVideoFiles = Set(remoteVideoFiles).subtracting(localVideoFiles)
         let newImage360Files = Set(remoteImage360Files).subtracting(localImage360Files)
         let newImageFiles = Set(remoteImageFiles).subtracting(localImageFiles)
+        let new3DModelsFiles = Set(remote3DModelsFiles).subtracting(local3DModelsFiles)
+
 
         print("New video files: \(newVideoFiles)")
         print("New 360 image files: \(newImage360Files)")
         print("New AR image files: \(newImageFiles)")
+        print("New 3DModels files: \(new3DModelsFiles)")
 
-        return !newVideoFiles.isEmpty || !newImage360Files.isEmpty || !newImageFiles.isEmpty
+
+        return !newVideoFiles.isEmpty || !newImage360Files.isEmpty || !newImageFiles.isEmpty || !new3DModelsFiles.isEmpty
     }
 
     func downloadFiles(progress: @escaping (Float) -> Void) async {
@@ -237,6 +249,8 @@ class FirebaseStorageService {
         await deleteMissingFiles(in: videosDirectory, storageRefPath: "Videos")
         await deleteMissingFiles(in: images360Directory, storageRefPath: "360View")
         await deleteMissingFiles(in: imagesDirectory, storageRefPath: "AR Images")
+        await deleteMissingFiles(in: modelsDirectory, storageRefPath: "3DModels")
+
     }
 
     private func deleteMissingFiles(in localDirectory: URL, storageRefPath: String) async {
