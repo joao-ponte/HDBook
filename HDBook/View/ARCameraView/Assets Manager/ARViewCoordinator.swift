@@ -255,13 +255,13 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
 
         // Check if the model is the HDLogo_ARM and apply specific configuration
         if imageAnchor.referenceImage.name == "HDLogo_ARM" {
-            // Set the model's position to be closer to the origin of the image anchor
-            modelEntity.setPosition(SIMD3<Float>(0, 0.10, 0), relativeTo: imageAnchorEntity)
+            // Set the model's position to be closer to the origin of the image anchor right/high/left
+            modelEntity.setPosition(SIMD3<Float>(0.01, 0.05, 0), relativeTo: imageAnchorEntity)
 
             // Adjust the scale
-            modelEntity.scale = [0.01, 0.01, 0.01]
+            modelEntity.scale = [0.0075, 0.0075, 0.0075]
 
-            // Apply rotation to the model around the x-axis by 90 degrees
+            // Apply rotation to the model around the x-axis
             let rotation = simd_quatf(angle: GLKMathDegreesToRadians(180), axis: SIMD3<Float>(1, 0, 0))
             modelEntity.setOrientation(rotation, relativeTo: imageAnchorEntity)
 
@@ -269,7 +269,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         } else {
             // Default configuration for other 3D models
             modelEntity.setPosition(SIMD3<Float>(0, 0, 0), relativeTo: imageAnchorEntity)
-            modelEntity.scale = [0.20, 0.20, 0.20]
+            modelEntity.scale = [0.10, 0.10, 0.10]
 
             print("Default configuration applied.")
         }
