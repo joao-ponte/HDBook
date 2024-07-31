@@ -12,6 +12,8 @@
 		1D164F8B2C513E63004C0F75 /* VideoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D164F8A2C513E63004C0F75 /* VideoManager.swift */; };
 		1D164F8D2C513E7E004C0F75 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D164F8C2C513E7E004C0F75 /* ImageManager.swift */; };
 		1D164F922C5144A8004C0F75 /* ARProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D164F912C5144A8004C0F75 /* ARProtocols.swift */; };
+		1D164F942C515F9B004C0F75 /* ModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D164F932C515F9B004C0F75 /* ModelManager.swift */; };
+		1D164F9F2C58FF58004C0F75 /* 3DModels.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D164F9E2C58FF58004C0F75 /* 3DModels.scnassets */; };
 		1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7012C49367200CFA245 /* HDBookApp.swift */; };
 		1DD7D7042C49367200CFA245 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7032C49367200CFA245 /* ContentView.swift */; };
 		1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7052C49367400CFA245 /* Assets.xcassets */; };
@@ -62,6 +64,8 @@
 		1D164F8A2C513E63004C0F75 /* VideoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoManager.swift; sourceTree = "<group>"; };
 		1D164F8C2C513E7E004C0F75 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 		1D164F912C5144A8004C0F75 /* ARProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARProtocols.swift; sourceTree = "<group>"; };
+		1D164F932C515F9B004C0F75 /* ModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelManager.swift; sourceTree = "<group>"; };
+		1D164F9E2C58FF58004C0F75 /* 3DModels.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = 3DModels.scnassets; sourceTree = "<group>"; };
 		1DD7D6FE2C49367200CFA245 /* HDBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HDBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7D7012C49367200CFA245 /* HDBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookApp.swift; sourceTree = "<group>"; };
 		1DD7D7032C49367200CFA245 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -125,6 +129,7 @@
 				1D164F8C2C513E7E004C0F75 /* ImageManager.swift */,
 				1D164F8A2C513E63004C0F75 /* VideoManager.swift */,
 				1D164F912C5144A8004C0F75 /* ARProtocols.swift */,
+				1D164F932C515F9B004C0F75 /* ModelManager.swift */,
 			);
 			path = "Assets Manager";
 			sourceTree = "<group>";
@@ -165,6 +170,7 @@
 				1DD7D7072C49367400CFA245 /* Preview Content */,
 				1D164F862C513B6C004C0F75 /* 360View.scnassets */,
 				1D164F882C513B7E004C0F75 /* Videos.scnassets */,
+				1D164F9E2C58FF58004C0F75 /* 3DModels.scnassets */,
 			);
 			path = HDBook;
 			sourceTree = "<group>";
@@ -370,6 +376,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D164F9F2C58FF58004C0F75 /* 3DModels.scnassets in Resources */,
 				1DD7D7512C49597E00CFA245 /* Assets Files in Resources */,
 				1DD7D7092C49367400CFA245 /* Preview Assets.xcassets in Resources */,
 				1D164F872C513B6C004C0F75 /* 360View.scnassets in Resources */,
@@ -417,6 +424,7 @@
 				1DD7D74F2C4958E700CFA245 /* AppColors.swift in Sources */,
 				1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */,
 				1D164F922C5144A8004C0F75 /* ARProtocols.swift in Sources */,
+				1D164F942C515F9B004C0F75 /* ModelManager.swift in Sources */,
 				1DD7D7572C495AC900CFA245 /* CTPanoramaCompass.swift in Sources */,
 				1DD7D7442C4957D400CFA245 /* ModifiedTutorialView.swift in Sources */,
 			);
