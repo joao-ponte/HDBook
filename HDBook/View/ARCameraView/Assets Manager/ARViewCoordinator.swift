@@ -253,15 +253,24 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
 
         let imageAnchorEntity = AnchorEntity(anchor: imageAnchor)
 
-        // Set the model's position to be closer to the origin of the image anchor
-        modelEntity.setPosition(SIMD3<Float>(0, 0.10, 0), relativeTo: imageAnchorEntity)
+        // Check if the model is the HDLogo_ARM and apply specific configuration
+        if imageAnchor.referenceImage.name == "HDLogo_ARM" {
+            // Set the model's position to be closer to the origin of the image anchor
+            modelEntity.setPosition(SIMD3<Float>(0, 0.10, 0), relativeTo: imageAnchorEntity)
 
-        // Optionally adjust the scale if needed
-        modelEntity.scale = [0.01, 0.01, 0.01]  // Example: scaling down the model
+            // Adjust the scale
+            modelEntity.scale = [0.015, 0.015, 0.015]
 
-        // Apply rotation to the model around the z-axis by 90 degrees
-        let rotation = simd_quatf(angle: GLKMathDegreesToRadians(90), axis: SIMD3<Float>(1, 0, 0))
-        modelEntity.setOrientation(rotation, relativeTo: imageAnchorEntity)
+            // Apply rotation to the model around the x-axis by 90 degrees
+            let rotation = simd_quatf(angle: GLKMathDegreesToRadians(90), axis: SIMD3<Float>(1, 0, 0))
+            modelEntity.setOrientation(rotation, relativeTo: imageAnchorEntity)
+
+            print("HDLogo_ARM specific configuration applied.")
+        } else {
+            // Default configuration for other 3D models
+            modelEntity.setPosition(SIMD3<Float>(0, 0, 0), relativeTo: imageAnchorEntity)
+            print("Default configuration applied.")
+        }
 
         imageAnchorEntity.addChild(modelEntity)
         arView.scene.addAnchor(imageAnchorEntity)
@@ -271,6 +280,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         print("3D model placed for UUID: \(uuid)")
         print("Model entity's final position: \(modelEntity.position)")
     }
+
     
     // MARK: - ARSessionDelegate
     
