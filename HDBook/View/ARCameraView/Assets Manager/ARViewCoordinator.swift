@@ -259,16 +259,18 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             modelEntity.setPosition(SIMD3<Float>(0, 0.10, 0), relativeTo: imageAnchorEntity)
 
             // Adjust the scale
-            modelEntity.scale = [0.015, 0.015, 0.015]
+            modelEntity.scale = [0.01, 0.01, 0.01]
 
             // Apply rotation to the model around the x-axis by 90 degrees
-            let rotation = simd_quatf(angle: GLKMathDegreesToRadians(90), axis: SIMD3<Float>(1, 0, 0))
+            let rotation = simd_quatf(angle: GLKMathDegreesToRadians(180), axis: SIMD3<Float>(1, 0, 0))
             modelEntity.setOrientation(rotation, relativeTo: imageAnchorEntity)
 
             print("HDLogo_ARM specific configuration applied.")
         } else {
             // Default configuration for other 3D models
             modelEntity.setPosition(SIMD3<Float>(0, 0, 0), relativeTo: imageAnchorEntity)
+            modelEntity.scale = [0.20, 0.20, 0.20]
+
             print("Default configuration applied.")
         }
 
