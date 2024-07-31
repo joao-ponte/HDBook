@@ -14,6 +14,7 @@ class FirebaseStorageService {
     let videosDirectory: URL
     let images360Directory: URL
     let modelsDirectory: URL
+    let superZoomDirectory: URL
     private let imagesDirectory: URL
     private(set) var arReferenceImages: [ARReferenceImage] = []
 
@@ -31,11 +32,13 @@ class FirebaseStorageService {
         images360Directory = documentDirectory.appendingPathComponent("360View")
         modelsDirectory = documentDirectory.appendingPathComponent("3DModels")
         imagesDirectory = documentDirectory.appendingPathComponent("AR Images")
+        superZoomDirectory = documentDirectory.appendingPathComponent("SuperZoom") // Fixed appendingPathComponent
 
         createDirectory(at: videosDirectory)
         createDirectory(at: images360Directory)
         createDirectory(at: modelsDirectory)
         createDirectory(at: imagesDirectory)
+        createDirectory(at: superZoomDirectory)
         
         loadLocalARReferenceImages()
         createARReferenceImages()
@@ -75,93 +78,106 @@ class FirebaseStorageService {
     func getLocalModelURL(for referenceImageName: String) -> URL? {
         return Bundle.main.url(forResource: referenceImageName, withExtension: "usdz", subdirectory: "/3DModels.scnassets")
     }
+    
+    func getLocalSuperZoomURL(for referenceImageName: String) -> URL? {
+        return Bundle.main.url(forResource: referenceImageName, withExtension: "jpg", subdirectory: "/SuperZoom.scnassets") // Changed to withExtension: "jpg"
+    }
 
     func hasNewAssets() async throws -> Bool {
         let videoRef = storage.reference(withPath: "Videos")
         let image360Ref = storage.reference(withPath: "360View")
         let imageRef = storage.reference().child("AR Images")
-        let ModelsRef = storage.reference().child("3DModels")
+        let modelsRef = storage.reference().child("3DModels")
+        let superZoomRef = storage.reference().child("SuperZoom")
 
         let localVideoFiles = try FileManager.default.contentsOfDirectory(atPath: videosDirectory.path)
         let localImage360Files = try FileManager.default.contentsOfDirectory(atPath: images360Directory.path)
         let localImageFiles = try FileManager.default.contentsOfDirectory(atPath: imagesDirectory.path)
         let local3DModelsFiles = try FileManager.default.contentsOfDirectory(atPath: modelsDirectory.path)
+        let localSuperZoomFiles = try FileManager.default.contentsOfDirectory(atPath: superZoomDirectory.path)
 
         print("Local video files: \(localVideoFiles)")
         print("Local 360 image files: \(localImage360Files)")
         print("Local AR image files: \(localImageFiles)")
         print("Local 3DModels files: \(local3DModelsFiles)")
-
+        print("Local SuperZoom files: \(localSuperZoomFiles)")
 
         let remoteVideoFiles = try await videoRef.listAll().items.map { $0.name }
         let remoteImage360Files = try await image360Ref.listAll().items.map { $0.name }
         let remoteImageFiles = try await imageRef.listAll().items.map { $0.name }
-        let remote3DModelsFiles = try await ModelsRef.listAll().items.map { $0.name }
-
+        let remote3DModelsFiles = try await modelsRef.listAll().items.map { $0.name }
+        let remoteSuperZoomFiles = try await superZoomRef.listAll().items.map { $0.name }
 
         print("Remote video files: \(remoteVideoFiles)")
         print("Remote 360 image files: \(remoteImage360Files)")
         print("Remote AR image files: \(remoteImageFiles)")
         print("Remote 3D Models files: \(remote3DModelsFiles)")
-
+        print("Remote SuperZoom files: \(remoteSuperZoomFiles)")
 
         let newVideoFiles = Set(remoteVideoFiles).subtracting(localVideoFiles)
         let newImage360Files = Set(remoteImage360Files).subtracting(localImage360Files)
         let newImageFiles = Set(remoteImageFiles).subtracting(localImageFiles)
         let new3DModelsFiles = Set(remote3DModelsFiles).subtracting(local3DModelsFiles)
-
+        let newSuperZoomFiles = Set(remoteSuperZoomFiles).subtracting(localSuperZoomFiles)
 
         print("New video files: \(newVideoFiles)")
         print("New 360 image files: \(newImage360Files)")
         print("New AR image files: \(newImageFiles)")
         print("New 3DModels files: \(new3DModelsFiles)")
+        print("New SuperZoom files: \(newSuperZoomFiles)")
 
-
-        return !newVideoFiles.isEmpty || !newImage360Files.isEmpty || !newImageFiles.isEmpty || !new3DModelsFiles.isEmpty
+        return !newVideoFiles.isEmpty || !newImage360Files.isEmpty || !newImageFiles.isEmpty || !new3DModelsFiles.isEmpty || !newSuperZoomFiles.isEmpty
     }
 
     func downloadFiles(progress: @escaping (Float) -> Void) async {
-           var totalFiles: Int = 0
-           var downloadedFiles: Int = 0
-           var newImagesDownloaded = false
+        var totalFiles: Int = 0
+        var downloadedFiles: Int = 0
+        var newImagesDownloaded = false
 
-           do {
-               let videoResult = try await storage.reference(withPath: "Videos").listAll()
-               totalFiles += videoResult.items.count
-               let image360Result = try await storage.reference(withPath: "360View").listAll()
-               totalFiles += image360Result.items.count
-               let imageResult = try await storage.reference().child("AR Images").listAll()
-               totalFiles += imageResult.items.count
-               let modelResult = try await storage.reference(withPath: "3DModels").listAll()
-               totalFiles += modelResult.items.count
-           } catch {
-               print("Error counting files: \(error)")
-           }
+        do {
+            let videoResult = try await storage.reference(withPath: "Videos").listAll()
+            totalFiles += videoResult.items.count
+            let image360Result = try await storage.reference(withPath: "360View").listAll()
+            totalFiles += image360Result.items.count
+            let imageResult = try await storage.reference().child("AR Images").listAll()
+            totalFiles += imageResult.items.count
+            let modelResult = try await storage.reference(withPath: "3DModels").listAll()
+            totalFiles += modelResult.items.count
+            let superZoomResult = try await storage.reference(withPath: "SuperZoom").listAll() // Add SuperZoom count
+            totalFiles += superZoomResult.items.count
+        } catch {
+            print("Error counting files: \(error)")
+        }
 
-           await downloadVideos(progress: { downloaded in
-               downloadedFiles += 1
-               progress(Float(downloadedFiles) / Float(totalFiles))
-           })
+        await downloadVideos(progress: { downloaded in
+            downloadedFiles += 1
+            progress(Float(downloadedFiles) / Float(totalFiles))
+        })
 
-           await downloadImages360(progress: { downloaded in
-               downloadedFiles += 1
-               progress(Float(downloadedFiles) / Float(totalFiles))
-           })
+        await downloadImages360(progress: { downloaded in
+            downloadedFiles += 1
+            progress(Float(downloadedFiles) / Float(totalFiles))
+        })
 
-           newImagesDownloaded = await downloadImages(progress: { downloaded in
-               downloadedFiles += 1
-               progress(Float(downloadedFiles) / Float(totalFiles))
-           })
+        newImagesDownloaded = await downloadImages(progress: { downloaded in
+            downloadedFiles += 1
+            progress(Float(downloadedFiles) / Float(totalFiles))
+        })
 
-           await downloadModels(progress: { downloaded in
-               downloadedFiles += 1
-               progress(Float(downloadedFiles) / Float(totalFiles))
-           })
+        await downloadModels(progress: { downloaded in
+            downloadedFiles += 1
+            progress(Float(downloadedFiles) / Float(totalFiles))
+        })
 
-           if newImagesDownloaded {
-               createARReferenceImages()
-           }
-       }
+        await downloadSuperZoom(progress: { downloaded in // Add SuperZoom download logic
+            downloadedFiles += 1
+            progress(Float(downloadedFiles) / Float(totalFiles))
+        })
+
+        if newImagesDownloaded {
+            createARReferenceImages()
+        }
+    }
 
     private func downloadVideos(progress: @escaping (Int) -> Void) async {
         let videoRef = storage.reference(withPath: "Videos")
@@ -210,6 +226,22 @@ class FirebaseStorageService {
             print("Error listing or downloading models: \(error)")
         }
     }
+    
+    private func downloadSuperZoom(progress: @escaping (Int) -> Void) async {
+        let superZoomRef = storage.reference(withPath: "SuperZoom")
+        do {
+            let result = try await superZoomRef.listAll()
+            for item in result.items {
+                let localURL = self.superZoomDirectory.appendingPathComponent(item.name)
+                if !FileManager.default.fileExists(atPath: localURL.path) {
+                    try await downloadFileAsync(from: item, to: localURL)
+                    progress(1)
+                }
+            }
+        } catch {
+            print("Error listing or downloading super zoom images: \(error)")
+        }
+    }
 
     private func downloadImages(progress: @escaping (Int) -> Void) async -> Bool {
         let imageRef = storage.reference().child("AR Images")
@@ -250,7 +282,7 @@ class FirebaseStorageService {
         await deleteMissingFiles(in: images360Directory, storageRefPath: "360View")
         await deleteMissingFiles(in: imagesDirectory, storageRefPath: "AR Images")
         await deleteMissingFiles(in: modelsDirectory, storageRefPath: "3DModels")
-
+        await deleteMissingFiles(in: superZoomDirectory, storageRefPath: "SuperZoom") // Add SuperZoom cleanup logic
     }
 
     private func deleteMissingFiles(in localDirectory: URL, storageRefPath: String) async {
