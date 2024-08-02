@@ -8,11 +8,51 @@
 import SwiftUI
 
 struct SuperZoomView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+    let imageURL: URL
+    @EnvironmentObject var coordinator: ARViewCoordinator
+    @State private var currentScale: CGFloat = 1.0
+    @State private var finalScale: CGFloat = 1.0
 
-#Preview {
-    SuperZoomView()
+    var body: some View {
+        VStack {
+            GeometryReader { geometry in
+                AsyncImage(url: imageURL) { image in
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .scaleEffect(currentScale * finalScale)
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { value in
+                                    currentScale = value
+                                }
+                                .onEnded { value in
+                                    finalScale *= value
+                                    currentScale = 1.0
+                                }
+                        )
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+            .edgesIgnoringSafeArea(.all)
+            .overlay(
+                VStack {
+                    HStack {
+                        Button(action: {
+                            coordinator.exitSuperZoomView()
+                        }) {
+                            Image(systemName: "arrow.backward.circle")
+                                .foregroundColor(.green)
+                                .font(.system(size: 28))
+                        }
+                        .padding()
+                        Spacer()
+                    }
+                    Spacer()
+                }
+            )
+        }
+    }
 }
