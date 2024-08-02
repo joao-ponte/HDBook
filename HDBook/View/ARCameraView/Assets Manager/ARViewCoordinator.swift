@@ -10,7 +10,7 @@ import RealityKit
 import ARKit
 
 class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessionManagement, ARImageHandling, ARVideoHandling {
-
+    
     var arView: ARView?
     var videoAnchors: [UUID: Date] = [:]
     var videoURLs: [UUID: URL] = [:]
@@ -22,6 +22,9 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     private var modelManager: ModelManagement
     
     @Published var is360ViewActive = false
+    @Published var isSuperZoomPresented: Bool = false
+    @Published var superZoomURL: URL?
+    
     private var firebaseStorageService: FirebaseStorageService
     
     init(firebaseStorageService: FirebaseStorageService, videoManager: VideoManager = VideoManager(), imageManager: ImageManager = ImageManager(), modelManager: ModelManagement = ModelManager()) {
@@ -96,17 +99,19 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         
         print("Image anchor detected: \(referenceImageName)")
         
-        // Determine the asset type based on the reference image name or another identifier
         if referenceImageName.contains("_CIN") {
             handleVideoAsset(for: referenceImageName, imageAnchor: imageAnchor, uuid: uuid)
         } else if referenceImageName.contains("_360") {
             handle360ImageAsset(for: referenceImageName, imageAnchor: imageAnchor)
         } else if referenceImageName.contains("_ARM") {
             handle3DModelAsset(for: referenceImageName, imageAnchor: imageAnchor)
+        } else if referenceImageName.contains("_SPZ") {  // Handling SuperZoom images
+            handleSuperZoomAsset(for: referenceImageName, imageAnchor: imageAnchor)
         } else {
             print("No valid asset type found for tracked image: \(referenceImageName)")
         }
     }
+    
     
     private func getVideoURL(for referenceImageName: String) -> URL? {
         let localVideoURL = firebaseStorageService.getLocalVideoURL(for: referenceImageName)
@@ -140,6 +145,14 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         }
     }
     
+    private func getSuperZoomURL(for referenceImageName: String) -> URL? {
+        let localSuperZoomURL = firebaseStorageService.getLocalSuperZoomURL(for: referenceImageName)
+        return localSuperZoomURL ?? firebaseStorageService.superZoomDirectory
+            .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
+            .appendingPathExtension("jpg")
+    }
+    
+    
     private func handleVideoAsset(for referenceImageName: String, imageAnchor: ARImageAnchor, uuid: UUID) {
         guard let videoURL = getVideoURL(for: referenceImageName) else {
             print("No valid video asset found for tracked image: \(referenceImageName)")
@@ -155,7 +168,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             print("Video file does not exist at path: \(videoURL.path)")
         }
     }
-
+    
     private func handle360ImageAsset(for referenceImageName: String, imageAnchor: ARImageAnchor) {
         guard let image360URL = getImage360URL(for: referenceImageName) else {
             print("No valid 360 image asset found for tracked image: \(referenceImageName)")
@@ -175,7 +188,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             print("360 image file does not exist at path: \(image360URL.path)")
         }
     }
-
+    
     private func handle3DModelAsset(for referenceImageName: String, imageAnchor: ARImageAnchor) {
         guard let modelsURL = get3DModelsURL(for: referenceImageName) else {
             print("No valid 3D Models asset found for tracked image: \(referenceImageName)")
@@ -197,6 +210,25 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             }
         } else {
             print("3D model file does not exist at path: \(modelsURL.path)")
+        }
+    }
+    
+    private func handleSuperZoomAsset(for referenceImageName: String, imageAnchor: ARImageAnchor) {
+        guard let superZoomURL = getSuperZoomURL(for: referenceImageName) else {
+            print("No valid SuperZoom asset found for tracked image: \(referenceImageName)")
+            return
+        }
+        
+        if FileManager.default.fileExists(atPath: superZoomURL.path) {
+            if let arView = arView {
+                presentSuperZoomView(superZoomURL: superZoomURL)
+                pauseARSession()
+                print("Presenting SuperZoom view for image: \(referenceImageName)")
+            } else {
+                print("Error: ARView is nil.")
+            }
+        } else {
+            print("SuperZoom image file does not exist at path: \(superZoomURL.path)")
         }
     }
     
@@ -250,39 +282,39 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     
     internal func place3DModel(modelEntity: ModelEntity, imageAnchor: ARImageAnchor, uuid: UUID) {
         guard let arView = arView else { return }
-
+        
         let imageAnchorEntity = AnchorEntity(anchor: imageAnchor)
-
+        
         // Check if the model is the HDLogo_ARM and apply specific configuration
         if imageAnchor.referenceImage.name == "HDLogo_ARM" {
             // Set the model's position to be closer to the origin of the image anchor right/high/left
             modelEntity.setPosition(SIMD3<Float>(0.01, 0.05, 0), relativeTo: imageAnchorEntity)
-
+            
             // Adjust the scale
             modelEntity.scale = [0.0075, 0.0075, 0.0075]
-
+            
             // Apply rotation to the model around the x-axis
             let rotation = simd_quatf(angle: GLKMathDegreesToRadians(180), axis: SIMD3<Float>(1, 0, 0))
             modelEntity.setOrientation(rotation, relativeTo: imageAnchorEntity)
-
+            
             print("HDLogo_ARM specific configuration applied.")
         } else {
             // Default configuration for other 3D models
             modelEntity.setPosition(SIMD3<Float>(0, 0, 0), relativeTo: imageAnchorEntity)
             modelEntity.scale = [0.10, 0.10, 0.10]
-
+            
             print("Default configuration applied.")
         }
-
+        
         imageAnchorEntity.addChild(modelEntity)
         arView.scene.addAnchor(imageAnchorEntity)
         activeAnchors[uuid] = imageAnchorEntity
-
+        
         startTrackingTimer(for: uuid)
         print("3D model placed for UUID: \(uuid)")
         print("Model entity's final position: \(modelEntity.position)")
     }
-
+    
     
     // MARK: - ARSessionDelegate
     
@@ -348,7 +380,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     private func list3DModelsDirectoryContents() {
         let fileManager = FileManager.default
         let modelsDirectoryPath = firebaseStorageService.modelsDirectory.path
-
+        
         do {
             let files = try fileManager.contentsOfDirectory(atPath: modelsDirectoryPath)
             print("Contents of 3DModels directory:")
@@ -359,5 +391,19 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             print("Error reading contents of 3DModels directory: \(error)")
         }
     }
+    
+    func presentSuperZoomView(superZoomURL: URL) {
+        self.superZoomURL = superZoomURL
+        self.isSuperZoomPresented = true
+        pauseARSession()
+    }
 
+    func exitSuperZoomView() {
+        self.superZoomURL = nil
+        self.isSuperZoomPresented = false
+        Task {
+            await resumeARSession()
+        }
+        print("Exited SuperZoom view.")
+    }
 }
