@@ -13,7 +13,7 @@ struct SuperZoomView: View {
 
     var body: some View {
         VStack {
-            ZoomableScrollView {
+            ZoomableView {
                 AsyncImage(url: imageURL) { image in
                     image
                         .resizable()

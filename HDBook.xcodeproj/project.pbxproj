@@ -16,7 +16,7 @@
 		1D164F9F2C58FF58004C0F75 /* 3DModels.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D164F9E2C58FF58004C0F75 /* 3DModels.scnassets */; };
 		1DB8F6BF2C5A9CC500C98E74 /* SuperZoom.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DB8F6BE2C5A9CC500C98E74 /* SuperZoom.scnassets */; };
 		1DB8F6C12C5CDFB100C98E74 /* SuperZoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB8F6C02C5CDFB100C98E74 /* SuperZoomView.swift */; };
-		1DB8F6C32C5D29EA00C98E74 /* ZoomableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB8F6C22C5D29EA00C98E74 /* ZoomableScrollView.swift */; };
+		1DB8F6C32C5D29EA00C98E74 /* ZoomableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB8F6C22C5D29EA00C98E74 /* ZoomableView.swift */; };
 		1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7012C49367200CFA245 /* HDBookApp.swift */; };
 		1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7052C49367400CFA245 /* Assets.xcassets */; };
 		1DD7D7092C49367400CFA245 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7082C49367400CFA245 /* Preview Assets.xcassets */; };
@@ -70,7 +70,7 @@
 		1D164F9E2C58FF58004C0F75 /* 3DModels.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = 3DModels.scnassets; sourceTree = "<group>"; };
 		1DB8F6BE2C5A9CC500C98E74 /* SuperZoom.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = SuperZoom.scnassets; sourceTree = "<group>"; };
 		1DB8F6C02C5CDFB100C98E74 /* SuperZoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperZoomView.swift; sourceTree = "<group>"; };
-		1DB8F6C22C5D29EA00C98E74 /* ZoomableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableScrollView.swift; sourceTree = "<group>"; };
+		1DB8F6C22C5D29EA00C98E74 /* ZoomableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableView.swift; sourceTree = "<group>"; };
 		1DD7D6FE2C49367200CFA245 /* HDBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HDBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7D7012C49367200CFA245 /* HDBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookApp.swift; sourceTree = "<group>"; };
 		1DD7D7052C49367400CFA245 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -256,7 +256,7 @@
 				1D164F8E2C513EEC004C0F75 /* Assets Manager */,
 				1DD7D7392C4956D600CFA245 /* ARCameraView.swift */,
 				1DB8F6C02C5CDFB100C98E74 /* SuperZoomView.swift */,
-				1DB8F6C22C5D29EA00C98E74 /* ZoomableScrollView.swift */,
+				1DB8F6C22C5D29EA00C98E74 /* ZoomableView.swift */,
 			);
 			path = ARCameraView;
 			sourceTree = "<group>";
@@ -421,7 +421,7 @@
 				1DD7D74A2C49583900CFA245 /* TutorialCards.swift in Sources */,
 				1DB8F6C12C5CDFB100C98E74 /* SuperZoomView.swift in Sources */,
 				1DD7D7332C4952CE00CFA245 /* ARViewCoordinator.swift in Sources */,
-				1DB8F6C32C5D29EA00C98E74 /* ZoomableScrollView.swift in Sources */,
+				1DB8F6C32C5D29EA00C98E74 /* ZoomableView.swift in Sources */,
 				1DD7D7462C4957EF00CFA245 /* ModifiedTutorialCardView.swift in Sources */,
 				1DD7D7352C4953DB00CFA245 /* LaunchScreen.swift in Sources */,
 				1DD7D73C2C49570900CFA245 /* TutorialCardsViewModel.swift in Sources */,
