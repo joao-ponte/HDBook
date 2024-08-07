@@ -10,31 +10,17 @@ import SwiftUI
 struct SuperZoomView: View {
     let imageURL: URL
     @EnvironmentObject var coordinator: ARViewCoordinator
-    @State private var currentScale: CGFloat = 1.0
-    @State private var finalScale: CGFloat = 1.0
 
     var body: some View {
         VStack {
-            GeometryReader { geometry in
+            ZoomableScrollView {
                 AsyncImage(url: imageURL) { image in
                     image
                         .resizable()
                         .scaledToFit()
-                        .scaleEffect(currentScale * finalScale)
-                        .gesture(
-                            MagnificationGesture()
-                                .onChanged { value in
-                                    currentScale = value
-                                }
-                                .onEnded { value in
-                                    finalScale *= value
-                                    currentScale = 1.0
-                                }
-                        )
                 } placeholder: {
                     ProgressView()
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height)
             }
             .edgesIgnoringSafeArea(.all)
             .overlay(
