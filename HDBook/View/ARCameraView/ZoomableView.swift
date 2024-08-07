@@ -24,8 +24,8 @@ struct ZoomableView<Content: View>: View {
         GeometryReader { geometry in
             content
                 .overlay(content: {
-                    GeometryReader { proxy in
-                        let rect = proxy.frame(in: .named("ZoomableView"))
+                    GeometryReader { geometry in
+                        let rect = geometry.frame(in: .named("ZoomableView"))
                         Color.clear
                             .onChange(of: isInteracting) { newValue in
                                 withAnimation(.easeInOut(duration: 0.2)) {
