@@ -9,11 +9,13 @@ import SwiftUI
 
 struct ZoomableView<Content: View>: View {
     let content: Content
-    @State private var scale: CGFloat = 1.0
+    
+    @State private var scale: CGFloat = 1
+    @State private var lastScale: CGFloat = 0
     @State private var offset: CGSize = .zero
-    @State private var initialScale: CGFloat = 1.0
-    @State private var lastOffset: CGSize = .zero
-
+    @State private var lastStoredOffset: CGSize = .zero
+    @GestureState private var isInteracting: Bool = false
+    
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -21,82 +23,72 @@ struct ZoomableView<Content: View>: View {
     var body: some View {
         GeometryReader { geometry in
             content
-                .scaleEffect(scale)
-                .offset(x: offset.width, y: offset.height)
-                .gesture(
-                    MagnificationGesture()
-                        .onChanged { value in
-                            let deltaScale = value / initialScale
-                            self.scale = max(1.0, self.scale * deltaScale)
-                            self.initialScale = value
-                        }
-                        .onEnded { _ in
-                            self.initialScale = 1.0
-                            self.adjustOffset(geometry: geometry)
-                        }
-                )
-                .gesture(
-                    DragGesture()
-                        .onChanged { value in
-                            self.offset = CGSize(width: value.translation.width + self.lastOffset.width,
-                                                 height: value.translation.height + self.lastOffset.height)
-                        }
-                        .onEnded { _ in
-                            self.lastOffset = self.offset
-                            self.adjustOffset(geometry: geometry)
-                        }
-                )
-                .onTapGesture(count: 2) {
-                    withAnimation {
-                        if scale > 1.0 {
-                            resetZoom()
+                .overlay(content: {
+                    GeometryReader { proxy in
+                        let rect = proxy.frame(in: .named("ZoomableView"))
+                        Color.clear
+                            .onChange(of: isInteracting) { newValue in
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    if rect.minX > 0 {
+                                        offset.width = (offset.width - rect.minX)
+                                        haptics(.medium)
+                                    }
+                                    if rect.minY > 0 {
+                                        offset.height = (offset.height - rect.minY)
+                                        haptics(.medium)
+                                    }
+                                    
+                                    if rect.maxX < size.width {
+                                        offset.width = (rect.minX - offset.width)
+                                        haptics(.medium)
+                                    }
+                                    if rect.maxY < size.height {
+                                        offset.height = (rect.minY - offset.height)
+                                        haptics(.medium)
+                                    }
+                                    
+                                }
+                                if !newValue {
+                                    lastStoredOffset = offset
+                                }
+                            }
+                    }
+                })
+        }
+        .scaleEffect(scale)
+        .offset(offset)
+        .coordinateSpace(name: "ZoomableView")
+        .gesture(
+            DragGesture()
+                .updating($isInteracting, body: { _, out, _ in
+                    out = true
+                }).onChanged({ value in
+                    let translation = value.translation
+                    offset = CGSize(width: translation.width + lastStoredOffset.width, height: translation.height + lastStoredOffset.height)
+                })
+
+        )
+        .gesture(
+            MagnificationGesture()
+                .updating($isInteracting, body: { _, out, _ in
+                    out = true
+                }).onChanged({ value in
+                    let updatedScale = value + lastScale
+                    scale = (updatedScale < 1 ? 1 : updatedScale)
+                }).onEnded({ value in
+                    withAnimation(.easeInOut(duration: 0.2)){
+                        if scale < 1 {
+                            scale = 1
+                            lastScale = 0
                         } else {
-                            zoomIn(geometry: geometry)
+                            lastScale = scale - 1
                         }
                     }
-                }
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-        }
+                })
+            
+        )
     }
-
-    private func resetZoom() {
-        scale = 1.0
-        offset = .zero
-        lastOffset = .zero
-    }
-
-    private func zoomIn(geometry: GeometryProxy) {
-        scale = 2.0
-
-        // Calculate the offset to zoom into the double-tapped area
-        let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
-        let newOffsetX = (center.x - geometry.size.width / 2) * scale
-        let newOffsetY = (center.y - geometry.size.height / 2) * scale
-
-        offset = CGSize(width: -newOffsetX, height: -newOffsetY)
-        lastOffset = offset
-    }
-
-    private func adjustOffset(geometry: GeometryProxy) {
-        let maxOffsetX = (geometry.size.width * scale - geometry.size.width) / 2
-        let maxOffsetY = (geometry.size.height * scale - geometry.size.height) / 2
-
-        let minOffsetX = -maxOffsetX
-        let minOffsetY = -maxOffsetY
-
-        if offset.width > maxOffsetX {
-            offset.width = maxOffsetX
-        } else if offset.width < minOffsetX {
-            offset.width = minOffsetX
-        }
-
-        if offset.height > maxOffsetY {
-            offset.height = maxOffsetY
-        } else if offset.height < minOffsetY {
-            offset.height = minOffsetY
-        }
-
-        lastOffset = offset
+    func haptics(_ style: UIImpactFeedbackGenerator.FeedbackStyle) {
+        UIImpactFeedbackGenerator(style: style).impactOccurred()
     }
 }
