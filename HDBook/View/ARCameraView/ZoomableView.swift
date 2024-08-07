@@ -16,7 +16,7 @@ struct ZoomableView<Content: View>: View {
     @State private var lastStoredOffset: CGSize = .zero
     @GestureState private var isInteracting: Bool = false
     
-    init(@ViewBuilder content: () -> Content) {
+    init(@ViewBuilder content: @escaping () -> Content) {
         self.content = content()
     }
 
@@ -38,11 +38,11 @@ struct ZoomableView<Content: View>: View {
                                         haptics(.medium)
                                     }
                                     
-                                    if rect.maxX < size.width {
+                                    if rect.maxX < geometry.size.width {
                                         offset.width = (rect.minX - offset.width)
                                         haptics(.medium)
                                     }
-                                    if rect.maxY < size.height {
+                                    if rect.maxY < geometry.size.height {
                                         offset.height = (rect.minY - offset.height)
                                         haptics(.medium)
                                     }

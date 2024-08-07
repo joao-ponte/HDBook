@@ -12,33 +12,36 @@ struct SuperZoomView: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
 
     var body: some View {
-        VStack {
-            ZoomableView {
-                AsyncImage(url: imageURL) { image in
-                    image
-                        .resizable()
-                        .scaledToFit()
-                } placeholder: {
-                    ProgressView()
+        GeometryReader { geometry in
+            VStack {
+                ZoomableView {
+                    AsyncImage(url: imageURL) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                    } placeholder: {
+                        ProgressView()
+                    }
                 }
-            }
-            .edgesIgnoringSafeArea(.all)
-            .overlay(
-                VStack {
-                    HStack {
-                        Button(action: {
-                            coordinator.exitSuperZoomView()
-                        }) {
-                            Image(systemName: "arrow.backward.circle")
-                                .foregroundColor(.green)
-                                .font(.system(size: 28))
+                .edgesIgnoringSafeArea(.all)
+                .overlay(
+                    VStack {
+                        HStack {
+                            Button(action: {
+                                coordinator.exitSuperZoomView()
+                            }) {
+                                Image(systemName: "arrow.backward.circle")
+                                    .foregroundColor(.green)
+                                    .font(.system(size: 28))
+                            }
+                            .padding()
+                            Spacer()
                         }
-                        .padding()
                         Spacer()
                     }
-                    Spacer()
-                }
-            )
+                )
+            }
         }
     }
 }
