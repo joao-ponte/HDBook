@@ -85,9 +85,20 @@ struct ZoomableView<Content: View>: View {
                         }
                     }
                 })
-            
+        )
+        .gesture(
+            TapGesture(count: 2)
+                .onEnded {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        scale = 1
+                        lastScale = 0
+                        offset = .zero
+                        lastStoredOffset = .zero
+                    }
+                }
         )
     }
+    
     func haptics(_ style: UIImpactFeedbackGenerator.FeedbackStyle) {
         UIImpactFeedbackGenerator(style: style).impactOccurred()
     }
