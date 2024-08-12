@@ -33,6 +33,8 @@ struct SuperZoomView: View {
                             .padding()
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(.top, geometry.safeAreaInsets.top)
+                    .padding(.leading, geometry.safeAreaInsets.leading)
                 )
                 .edgesIgnoringSafeArea(.all)
             } else {
@@ -55,4 +57,3 @@ struct SuperZoomView: View {
         }
     }
 }
-
