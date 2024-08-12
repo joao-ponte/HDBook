@@ -46,15 +46,11 @@ class FirebaseStorageService {
     }
 
     private func createDirectory(at url: URL) {
-        if !fileManager.fileExists(atPath: url.path) {
-            do {
-                try fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-                print("Created directory at: \(url.path)")
-            } catch {
-                print("Error creating directory: \(error)")
-            }
-        } else {
-            print("Directory already exists at: \(url.path)")
+        do {
+            try fileManager.createDirectoryIfNotExists(at: url)
+            print("Created directory at: \(url.path)")
+        } catch {
+            print("Error creating directory: \(error)")
         }
     }
     
@@ -185,7 +181,7 @@ class FirebaseStorageService {
             let result = try await videoRef.listAll()
             for item in result.items {
                 let localURL = self.videosDirectory.appendingPathComponent(item.name)
-                if !fileManager.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(at: localURL) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                 }
@@ -201,7 +197,7 @@ class FirebaseStorageService {
             let result = try await image360Ref.listAll()
             for item in result.items {
                 let localURL = self.images360Directory.appendingPathComponent(item.name)
-                if !fileManager.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(at: localURL) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                 }
@@ -217,7 +213,7 @@ class FirebaseStorageService {
             let result = try await modelRef.listAll()
             for item in result.items {
                 let localURL = self.modelsDirectory.appendingPathComponent(item.name)
-                if !fileManager.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(at: localURL) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                 }
@@ -233,7 +229,7 @@ class FirebaseStorageService {
             let result = try await superZoomRef.listAll()
             for item in result.items {
                 let localURL = self.superZoomDirectory.appendingPathComponent(item.name)
-                if !fileManager.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(at: localURL) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                 }
@@ -250,7 +246,7 @@ class FirebaseStorageService {
             let result = try await imageRef.listAll()
             for item in result.items {
                 let localURL = self.imagesDirectory.appendingPathComponent(item.name)
-                if !fileManager.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(at: localURL) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                     newImagesDownloaded = true
