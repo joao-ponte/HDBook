@@ -29,11 +29,11 @@ class FirebaseStorageService {
             fatalError("Error: Failed to find document directory")
         }
 
-        videosDirectory = documentDirectory.appendingPathComponent("Videos")
-        images360Directory = documentDirectory.appendingPathComponent("360View")
-        modelsDirectory = documentDirectory.appendingPathComponent("3DModels")
-        imagesDirectory = documentDirectory.appendingPathComponent("AR Images")
-        superZoomDirectory = documentDirectory.appendingPathComponent("SuperZoom")
+        videosDirectory = documentDirectory.appendingPathComponent(Constants.videoDirectory)
+        images360Directory = documentDirectory.appendingPathComponent(Constants.image360Directory)
+        modelsDirectory = documentDirectory.appendingPathComponent(Constants.modelsDirectory)
+        imagesDirectory = documentDirectory.appendingPathComponent(Constants.arImagesDirectory)
+        superZoomDirectory = documentDirectory.appendingPathComponent(Constants.superZoomDirectory)
 
         createDirectory(at: videosDirectory)
         createDirectory(at: images360Directory)
@@ -68,27 +68,27 @@ class FirebaseStorageService {
     }
 
     func getLocalVideoURL(for referenceImageName: String) -> URL? {
-        return Bundle.main.url(forResource: referenceImageName, withExtension: "mp4", subdirectory: "/Videos.scnassets")
+        return Bundle.main.url(forResource: referenceImageName, withExtension: Constants.videoExtension, subdirectory: "/Videos.scnassets")
     }
 
     func getLocalImage360URL(for referenceImageName: String) -> URL? {
-        return Bundle.main.url(forResource: referenceImageName, withExtension: "jpg", subdirectory: "/360View.scnassets")
+        return Bundle.main.url(forResource: referenceImageName, withExtension: Constants.image360Extension, subdirectory: "/360View.scnassets")
     }
     
     func getLocalModelURL(for referenceImageName: String) -> URL? {
-        return Bundle.main.url(forResource: referenceImageName, withExtension: "usdz", subdirectory: "/3DModels.scnassets")
+        return Bundle.main.url(forResource: referenceImageName, withExtension: Constants.modelExtension, subdirectory: "/3DModels.scnassets")
     }
     
     func getLocalSuperZoomURL(for referenceImageName: String) -> URL? {
-        return Bundle.main.url(forResource: referenceImageName, withExtension: "jpg", subdirectory: "/SuperZoom.scnassets")
+        return Bundle.main.url(forResource: referenceImageName, withExtension: Constants.superZoomExtension, subdirectory: "/SuperZoom.scnassets")
     }
 
     func hasNewAssets() async throws -> Bool {
-        let videoRef = storage.reference(withPath: "Videos")
-        let image360Ref = storage.reference(withPath: "360View")
-        let imageRef = storage.reference().child("AR Images")
-        let modelsRef = storage.reference().child("3DModels")
-        let superZoomRef = storage.reference().child("SuperZoom")
+        let videoRef = storage.reference(withPath: Constants.videoDirectory)
+        let image360Ref = storage.reference(withPath: Constants.image360Directory)
+        let imageRef = storage.reference().child(Constants.arImagesDirectory)
+        let modelsRef = storage.reference().child(Constants.modelsDirectory)
+        let superZoomRef = storage.reference().child(Constants.superZoomDirectory)
 
         let localVideoFiles = try fileManager.contentsOfDirectory(atPath: videosDirectory.path)
         let localImage360Files = try fileManager.contentsOfDirectory(atPath: images360Directory.path)
@@ -135,15 +135,15 @@ class FirebaseStorageService {
         var newImagesDownloaded = false
 
         do {
-            let videoResult = try await storage.reference(withPath: "Videos").listAll()
+            let videoResult = try await storage.reference(withPath: Constants.videoDirectory).listAll()
             totalFiles += videoResult.items.count
-            let image360Result = try await storage.reference(withPath: "360View").listAll()
+            let image360Result = try await storage.reference(withPath: Constants.image360Directory).listAll()
             totalFiles += image360Result.items.count
-            let imageResult = try await storage.reference().child("AR Images").listAll()
+            let imageResult = try await storage.reference().child(Constants.arImagesDirectory).listAll()
             totalFiles += imageResult.items.count
-            let modelResult = try await storage.reference(withPath: "3DModels").listAll()
+            let modelResult = try await storage.reference(withPath: Constants.modelsDirectory).listAll()
             totalFiles += modelResult.items.count
-            let superZoomResult = try await storage.reference(withPath: "SuperZoom").listAll()
+            let superZoomResult = try await storage.reference(withPath: Constants.superZoomDirectory).listAll()
             totalFiles += superZoomResult.items.count
         } catch {
             print("Error counting files: \(error)")
@@ -180,7 +180,7 @@ class FirebaseStorageService {
     }
 
     private func downloadVideos(progress: @escaping (Int) -> Void) async {
-        let videoRef = storage.reference(withPath: "Videos")
+        let videoRef = storage.reference(withPath: Constants.videoDirectory)
         do {
             let result = try await videoRef.listAll()
             for item in result.items {
@@ -196,7 +196,7 @@ class FirebaseStorageService {
     }
 
     private func downloadImages360(progress: @escaping (Int) -> Void) async {
-        let image360Ref = storage.reference(withPath: "360View")
+        let image360Ref = storage.reference(withPath: Constants.image360Directory)
         do {
             let result = try await image360Ref.listAll()
             for item in result.items {
@@ -212,7 +212,7 @@ class FirebaseStorageService {
     }
     
     private func downloadModels(progress: @escaping (Int) -> Void) async {
-        let modelRef = storage.reference(withPath: "3DModels")
+        let modelRef = storage.reference(withPath: Constants.modelsDirectory)
         do {
             let result = try await modelRef.listAll()
             for item in result.items {
@@ -228,7 +228,7 @@ class FirebaseStorageService {
     }
     
     private func downloadSuperZoom(progress: @escaping (Int) -> Void) async {
-        let superZoomRef = storage.reference(withPath: "SuperZoom")
+        let superZoomRef = storage.reference(withPath: Constants.superZoomDirectory)
         do {
             let result = try await superZoomRef.listAll()
             for item in result.items {
@@ -244,7 +244,7 @@ class FirebaseStorageService {
     }
 
     private func downloadImages(progress: @escaping (Int) -> Void) async -> Bool {
-        let imageRef = storage.reference().child("AR Images")
+        let imageRef = storage.reference().child(Constants.arImagesDirectory)
         var newImagesDownloaded = false
         do {
             let result = try await imageRef.listAll()
@@ -278,11 +278,11 @@ class FirebaseStorageService {
     }
 
     func deleteMissingLocalFiles() async {
-        await deleteMissingFiles(in: videosDirectory, storageRefPath: "Videos")
-        await deleteMissingFiles(in: images360Directory, storageRefPath: "360View")
-        await deleteMissingFiles(in: imagesDirectory, storageRefPath: "AR Images")
-        await deleteMissingFiles(in: modelsDirectory, storageRefPath: "3DModels")
-        await deleteMissingFiles(in: superZoomDirectory, storageRefPath: "SuperZoom")
+        await deleteMissingFiles(in: videosDirectory, storageRefPath: Constants.videoDirectory)
+        await deleteMissingFiles(in: images360Directory, storageRefPath: Constants.image360Directory)
+        await deleteMissingFiles(in: imagesDirectory, storageRefPath: Constants.arImagesDirectory)
+        await deleteMissingFiles(in: modelsDirectory, storageRefPath: Constants.modelsDirectory)
+        await deleteMissingFiles(in: superZoomDirectory, storageRefPath: Constants.superZoomDirectory)
     }
 
     private func deleteMissingFiles(in localDirectory: URL, storageRefPath: String) async {

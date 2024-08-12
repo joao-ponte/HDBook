@@ -19,6 +19,7 @@
 		1DB8F6C72C66572800C98E74 /* CGPoint-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB8F6C62C66572800C98E74 /* CGPoint-extension.swift */; };
 		1DB8F6C92C66574600C98E74 /* CGSize-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB8F6C82C66574600C98E74 /* CGSize-extension.swift */; };
 		1DB8F6CF2C665B6000C98E74 /* SuperZoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB8F6CE2C665B6000C98E74 /* SuperZoomView.swift */; };
+		1DD1DB4B2C6A584D004239F0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB4A2C6A584D004239F0 /* Constants.swift */; };
 		1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7012C49367200CFA245 /* HDBookApp.swift */; };
 		1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7052C49367400CFA245 /* Assets.xcassets */; };
 		1DD7D7092C49367400CFA245 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7082C49367400CFA245 /* Preview Assets.xcassets */; };
@@ -75,6 +76,7 @@
 		1DB8F6C62C66572800C98E74 /* CGPoint-extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint-extension.swift"; sourceTree = "<group>"; };
 		1DB8F6C82C66574600C98E74 /* CGSize-extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize-extension.swift"; sourceTree = "<group>"; };
 		1DB8F6CE2C665B6000C98E74 /* SuperZoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperZoomView.swift; sourceTree = "<group>"; };
+		1DD1DB4A2C6A584D004239F0 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		1DD7D6FE2C49367200CFA245 /* HDBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HDBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7D7012C49367200CFA245 /* HDBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookApp.swift; sourceTree = "<group>"; };
 		1DD7D7052C49367400CFA245 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 			isa = PBXGroup;
 			children = (
 				1DD7D7492C49583900CFA245 /* TutorialCards.swift */,
+				1DD1DB4A2C6A584D004239F0 /* Constants.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -459,6 +462,7 @@
 				1D164F942C515F9B004C0F75 /* ModelManager.swift in Sources */,
 				1DD7D7572C495AC900CFA245 /* CTPanoramaCompass.swift in Sources */,
 				1DD7D7442C4957D400CFA245 /* ModifiedTutorialView.swift in Sources */,
+				1DD1DB4B2C6A584D004239F0 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
