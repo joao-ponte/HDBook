@@ -49,8 +49,7 @@ struct ImageZoomView: UIViewRepresentable {
         uiScrollView.showsVerticalScrollIndicator = false
         uiScrollView.showsHorizontalScrollIndicator = false
         uiScrollView.clipsToBounds = false
-        // lets content move outside safe areas when set to .never
-//        uiScrollView.contentInsetAdjustmentBehavior = .never
+
         let gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleDoubleTapGesture(gestureRecognizer:)))
         gesture.numberOfTapsRequired = 2
         content.addGestureRecognizer(gesture)
@@ -118,18 +117,30 @@ struct ImageZoomView: UIViewRepresentable {
             self.parent = parent
         }
         
-        @objc func handleDoubleTapGesture(gestureRecognizer: UITapGestureRecognizer) -> Void {
-            // zoom based on gesture
-            print("double tap")
-            switch parent.zoomState {
-            case .max(_):
+        @objc func handleDoubleTapGesture(gestureRecognizer: UITapGestureRecognizer) {
+            guard let scrollView = gestureRecognizer.view?.superview as? UIScrollView else { return }
+
+            let customZoomScale: CGFloat = (scrollView.minimumZoomScale + scrollView.maximumZoomScale) / 5 // Set your custom zoom level here
+
+            if scrollView.zoomScale < customZoomScale {
+                // Zoom in to the custom zoom scale
+                let location = gestureRecognizer.location(in: gestureRecognizer.view)
+                let zoomRect = zoomRectForScale(scale: customZoomScale, center: location, scrollView: scrollView)
+                scrollView.zoom(to: zoomRect, animated: true)
+                parent.zoomState = .partial
+            } else {
+                // Zoom out to the minimum zoom scale
+                scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
                 parent.zoomState = .min
-            default:
-                if let imageView = gestureRecognizer.view {
-                    parent.zoomState = .max(center: gestureRecognizer.location(in: imageView))
-                }
             }
         }
+
+        func zoomRectForScale(scale: CGFloat, center: CGPoint, scrollView: UIScrollView) -> CGRect {
+            let size = CGSize(width: scrollView.frame.size.width / scale, height: scrollView.frame.size.height / scale)
+            let origin = CGPoint(x: center.x - size.width / 2, y: center.y - size.height / 2)
+            return CGRect(origin: origin, size: size)
+        }
+
         
         func viewForZooming(in scrollView: UIScrollView) -> UIView? {
             return scrollView.subviews.first
