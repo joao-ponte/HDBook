@@ -30,6 +30,12 @@ struct ARCameraView: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .fullScreenCover(isPresented: $coordinator.isSuperZoomPresented) {
+            if let superZoomURL = coordinator.superZoomURL {
+                SuperZoomView(imageURL: superZoomURL)
+                    .environmentObject(coordinator)
+            }
+        }
     }
 }
 
