@@ -18,5 +18,15 @@ struct Constants {
     static let image360Extension = "jpg"
     static let modelExtension = "usdz"
     static let superZoomExtension = "jpg"
+    
+    static let videoSuffix = "_CIN"
+    static let image360Suffix = "_360"
+    static let modelSuffix = "_ARM"
+    static let superZoomSuffix = "_SPZ"
+    
+    static let assetTypeVideo = "video"
+    static let assetTypeImage360 = "image360"
+    static let assetTypeModel = "model"
+    static let assetTypeSuperZoom = "superZoom"
 }
 

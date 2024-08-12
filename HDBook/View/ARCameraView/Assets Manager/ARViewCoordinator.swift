@@ -89,67 +89,87 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     // MARK: - ARImageHandling
     
     internal func handleImageAnchor(_ imageAnchor: ARImageAnchor) {
-        let uuid = imageAnchor.identifier
-        videoAnchors[uuid] = Date()
-        
-        guard let referenceImageName = imageAnchor.referenceImage.name else {
-            print("Failed to get reference image name.")
-            return
+            let uuid = imageAnchor.identifier
+            videoAnchors[uuid] = Date()
+            
+            guard let referenceImageName = imageAnchor.referenceImage.name else {
+                print("Failed to get reference image name.")
+                return
+            }
+            
+            print("Image anchor detected: \(referenceImageName)")
+            
+            switch identifyAssetType(from: referenceImageName) {
+            case .video:
+                handleVideoAsset(for: referenceImageName, imageAnchor: imageAnchor, uuid: uuid)
+            case .image360:
+                handle360ImageAsset(for: referenceImageName, imageAnchor: imageAnchor)
+            case .model:
+                handle3DModelAsset(for: referenceImageName, imageAnchor: imageAnchor)
+            case .superZoom:
+                handleSuperZoomAsset(for: referenceImageName, imageAnchor: imageAnchor)
+            case .unknown:
+                print("No valid asset type found for tracked image: \(referenceImageName)")
+            }
         }
         
-        print("Image anchor detected: \(referenceImageName)")
-        
-        if referenceImageName.contains("_CIN") {
-            handleVideoAsset(for: referenceImageName, imageAnchor: imageAnchor, uuid: uuid)
-        } else if referenceImageName.contains("_360") {
-            handle360ImageAsset(for: referenceImageName, imageAnchor: imageAnchor)
-        } else if referenceImageName.contains("_ARM") {
-            handle3DModelAsset(for: referenceImageName, imageAnchor: imageAnchor)
-        } else if referenceImageName.contains("_SPZ") {  // Handling SuperZoom images
-            handleSuperZoomAsset(for: referenceImageName, imageAnchor: imageAnchor)
+        private func identifyAssetType(from referenceImageName: String) -> AssetType {
+            if referenceImageName.contains(Constants.videoSuffix) {
+                return .video
+            } else if referenceImageName.contains(Constants.image360Suffix) {
+                return .image360
+            } else if referenceImageName.contains(Constants.modelSuffix) {
+                return .model
+            } else if referenceImageName.contains(Constants.superZoomSuffix) {
+                return .superZoom
+            } else {
+                return .unknown
+            }
+        }
+    
+    private func getAssetURL(for referenceImageName: String, localURLProvider: (String) -> URL?, directory: URL, fileExtension: String) -> URL? {
+        if let localURL = localURLProvider(referenceImageName) {
+            return localURL
         } else {
-            print("No valid asset type found for tracked image: \(referenceImageName)")
+            let fileName = String(referenceImageName.split(separator: ".").first ?? "")
+            return directory.appendingPathComponent(fileName).appendingPathExtension(fileExtension)
         }
     }
-    
-    
+
     private func getVideoURL(for referenceImageName: String) -> URL? {
-        let localVideoURL = firebaseStorageService.getLocalVideoURL(for: referenceImageName)
-        return localVideoURL ?? firebaseStorageService.videosDirectory
-            .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
-            .appendingPathExtension("mp4")
+        return getAssetURL(
+            for: referenceImageName,
+            localURLProvider: firebaseStorageService.getLocalVideoURL,
+            directory: firebaseStorageService.videosDirectory,
+            fileExtension: Constants.videoExtension
+        )
     }
-    
+
     private func getImage360URL(for referenceImageName: String) -> URL? {
-        let localImage360URL = firebaseStorageService.getLocalImage360URL(for: referenceImageName)
-        return localImage360URL ?? firebaseStorageService.images360Directory
-            .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
-            .appendingPathExtension("jpg")
+        return getAssetURL(
+            for: referenceImageName,
+            localURLProvider: firebaseStorageService.getLocalImage360URL,
+            directory: firebaseStorageService.images360Directory,
+            fileExtension: Constants.image360Extension
+        )
     }
-    
+
     private func get3DModelsURL(for referenceImageName: String) -> URL? {
-        let local3DModelsURL = firebaseStorageService.getLocalModelURL(for: referenceImageName)
-        print("Local 3D Model URL: \(String(describing: local3DModelsURL?.path))")
-        
-        guard let url = local3DModelsURL else {
-            print("No valid 3D Model URL found for reference image: \(referenceImageName)")
-            return nil
-        }
-        
-        if FileManager.default.fileExists(atPath: url.path) {
-            print("3D Model file exists at path: \(url.path)")
-            return url
-        } else {
-            print("3D Model file does not exist at path: \(url.path)")
-            return nil
-        }
+        return getAssetURL(
+            for: referenceImageName,
+            localURLProvider: firebaseStorageService.getLocalModelURL,
+            directory: firebaseStorageService.modelsDirectory,
+            fileExtension: Constants.modelExtension
+        )
     }
-    
+
     private func getSuperZoomURL(for referenceImageName: String) -> URL? {
-        let localSuperZoomURL = firebaseStorageService.getLocalSuperZoomURL(for: referenceImageName)
-        return localSuperZoomURL ?? firebaseStorageService.superZoomDirectory
-            .appendingPathComponent(String(referenceImageName.split(separator: ".").first ?? ""))
-            .appendingPathExtension("jpg")
+        return getAssetURL(
+            for: referenceImageName,
+            localURLProvider: firebaseStorageService.getLocalSuperZoomURL,
+            directory: firebaseStorageService.superZoomDirectory,
+            fileExtension: Constants.superZoomExtension
+        )
     }
     
     
