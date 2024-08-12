@@ -11,6 +11,7 @@ import ARKit
 
 class FirebaseStorageService {
     private let storage: Storage
+    private let fileManager: FileManager
     let videosDirectory: URL
     let images360Directory: URL
     let modelsDirectory: URL
@@ -20,10 +21,10 @@ class FirebaseStorageService {
 
     static let shared = FirebaseStorageService()
 
-    private init() {
-        self.storage = Storage.storage()
+    init(storage: Storage = Storage.storage(), fileManager: FileManager = .default) {
+        self.storage = storage
+        self.fileManager = fileManager
 
-        let fileManager = FileManager.default
         guard let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
             fatalError("Error: Failed to find document directory")
         }
@@ -32,7 +33,7 @@ class FirebaseStorageService {
         images360Directory = documentDirectory.appendingPathComponent("360View")
         modelsDirectory = documentDirectory.appendingPathComponent("3DModels")
         imagesDirectory = documentDirectory.appendingPathComponent("AR Images")
-        superZoomDirectory = documentDirectory.appendingPathComponent("SuperZoom") // Fixed appendingPathComponent
+        superZoomDirectory = documentDirectory.appendingPathComponent("SuperZoom")
 
         createDirectory(at: videosDirectory)
         createDirectory(at: images360Directory)
@@ -45,7 +46,6 @@ class FirebaseStorageService {
     }
 
     private func createDirectory(at url: URL) {
-        let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: url.path) {
             do {
                 try fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
@@ -80,7 +80,7 @@ class FirebaseStorageService {
     }
     
     func getLocalSuperZoomURL(for referenceImageName: String) -> URL? {
-        return Bundle.main.url(forResource: referenceImageName, withExtension: "jpg", subdirectory: "/SuperZoom.scnassets") // Changed to withExtension: "jpg"
+        return Bundle.main.url(forResource: referenceImageName, withExtension: "jpg", subdirectory: "/SuperZoom.scnassets")
     }
 
     func hasNewAssets() async throws -> Bool {
@@ -90,11 +90,11 @@ class FirebaseStorageService {
         let modelsRef = storage.reference().child("3DModels")
         let superZoomRef = storage.reference().child("SuperZoom")
 
-        let localVideoFiles = try FileManager.default.contentsOfDirectory(atPath: videosDirectory.path)
-        let localImage360Files = try FileManager.default.contentsOfDirectory(atPath: images360Directory.path)
-        let localImageFiles = try FileManager.default.contentsOfDirectory(atPath: imagesDirectory.path)
-        let local3DModelsFiles = try FileManager.default.contentsOfDirectory(atPath: modelsDirectory.path)
-        let localSuperZoomFiles = try FileManager.default.contentsOfDirectory(atPath: superZoomDirectory.path)
+        let localVideoFiles = try fileManager.contentsOfDirectory(atPath: videosDirectory.path)
+        let localImage360Files = try fileManager.contentsOfDirectory(atPath: images360Directory.path)
+        let localImageFiles = try fileManager.contentsOfDirectory(atPath: imagesDirectory.path)
+        let local3DModelsFiles = try fileManager.contentsOfDirectory(atPath: modelsDirectory.path)
+        let localSuperZoomFiles = try fileManager.contentsOfDirectory(atPath: superZoomDirectory.path)
 
         print("Local video files: \(localVideoFiles)")
         print("Local 360 image files: \(localImage360Files)")
@@ -143,7 +143,7 @@ class FirebaseStorageService {
             totalFiles += imageResult.items.count
             let modelResult = try await storage.reference(withPath: "3DModels").listAll()
             totalFiles += modelResult.items.count
-            let superZoomResult = try await storage.reference(withPath: "SuperZoom").listAll() // Add SuperZoom count
+            let superZoomResult = try await storage.reference(withPath: "SuperZoom").listAll()
             totalFiles += superZoomResult.items.count
         } catch {
             print("Error counting files: \(error)")
@@ -169,7 +169,7 @@ class FirebaseStorageService {
             progress(Float(downloadedFiles) / Float(totalFiles))
         })
 
-        await downloadSuperZoom(progress: { downloaded in // Add SuperZoom download logic
+        await downloadSuperZoom(progress: { downloaded in
             downloadedFiles += 1
             progress(Float(downloadedFiles) / Float(totalFiles))
         })
@@ -185,7 +185,7 @@ class FirebaseStorageService {
             let result = try await videoRef.listAll()
             for item in result.items {
                 let localURL = self.videosDirectory.appendingPathComponent(item.name)
-                if !FileManager.default.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(atPath: localURL.path) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                 }
@@ -201,7 +201,7 @@ class FirebaseStorageService {
             let result = try await image360Ref.listAll()
             for item in result.items {
                 let localURL = self.images360Directory.appendingPathComponent(item.name)
-                if !FileManager.default.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(atPath: localURL.path) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                 }
@@ -217,7 +217,7 @@ class FirebaseStorageService {
             let result = try await modelRef.listAll()
             for item in result.items {
                 let localURL = self.modelsDirectory.appendingPathComponent(item.name)
-                if !FileManager.default.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(atPath: localURL.path) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                 }
@@ -233,7 +233,7 @@ class FirebaseStorageService {
             let result = try await superZoomRef.listAll()
             for item in result.items {
                 let localURL = self.superZoomDirectory.appendingPathComponent(item.name)
-                if !FileManager.default.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(atPath: localURL.path) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                 }
@@ -250,7 +250,7 @@ class FirebaseStorageService {
             let result = try await imageRef.listAll()
             for item in result.items {
                 let localURL = self.imagesDirectory.appendingPathComponent(item.name)
-                if !FileManager.default.fileExists(atPath: localURL.path) {
+                if !fileManager.fileExists(atPath: localURL.path) {
                     try await downloadFileAsync(from: item, to: localURL)
                     progress(1)
                     newImagesDownloaded = true
@@ -282,11 +282,10 @@ class FirebaseStorageService {
         await deleteMissingFiles(in: images360Directory, storageRefPath: "360View")
         await deleteMissingFiles(in: imagesDirectory, storageRefPath: "AR Images")
         await deleteMissingFiles(in: modelsDirectory, storageRefPath: "3DModels")
-        await deleteMissingFiles(in: superZoomDirectory, storageRefPath: "SuperZoom") // Add SuperZoom cleanup logic
+        await deleteMissingFiles(in: superZoomDirectory, storageRefPath: "SuperZoom")
     }
 
     private func deleteMissingFiles(in localDirectory: URL, storageRefPath: String) async {
-        let fileManager = FileManager.default
         do {
             let localFiles = try fileManager.contentsOfDirectory(at: localDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             let storageRef = storage.reference().child(storageRefPath)
@@ -309,17 +308,16 @@ class FirebaseStorageService {
 
     func createARReferenceImages() {
         arReferenceImages.removeAll()
-        let fileManager = FileManager.default
         do {
             let imageFiles = try fileManager.contentsOfDirectory(atPath: imagesDirectory.path)
-            print("Found \(imageFiles.count) image files in directory.")  // Debug log
+            print("Found \(imageFiles.count) image files in directory.")
             for file in imageFiles {
                 let imageURL = imagesDirectory.appendingPathComponent(file)
                 if let image = UIImage(contentsOfFile: imageURL.path) {
                     let components = file.split(separator: "-")
                     if components.count > 1, let widthString = components[1].split(separator: ".").first,
                        let physicalWidthCM = Double(widthString) {
-                        let physicalWidth = CGFloat((physicalWidthCM) / 100.0)  // Convert cm to meters
+                        let physicalWidth = CGFloat((physicalWidthCM) / 100.0)
                         guard let cgImage = image.cgImage else {
                             print("Error: Could not create CGImage from file \(file)")
                             continue
@@ -327,7 +325,7 @@ class FirebaseStorageService {
                         let arImage = ARReferenceImage(cgImage, orientation: .up, physicalWidth: physicalWidth)
                         arImage.name = file
                         arReferenceImages.append(arImage)
-                        print("Created ARReferenceImage: \(file) with width: \(physicalWidth) meters")  // Debug log
+                        print("Created ARReferenceImage: \(file) with width: \(physicalWidth) meters")
                     } else {
                         print("Error: Could not parse physical width from file \(file)")
                     }
@@ -338,8 +336,8 @@ class FirebaseStorageService {
         } catch {
             print("Error reading files in directory \(imagesDirectory.path): \(error)")
         }
-        loadLocalARReferenceImages() // Ensure local images are also added
-        print("Total ARReferenceImages created: \(arReferenceImages.count)")  // Debug log
+        loadLocalARReferenceImages()
+        print("Total ARReferenceImages created: \(arReferenceImages.count)")
     }
 
     func getARReferenceImages() -> [ARReferenceImage] {
