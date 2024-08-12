@@ -120,7 +120,7 @@ struct ImageZoomView: UIViewRepresentable {
         @objc func handleDoubleTapGesture(gestureRecognizer: UITapGestureRecognizer) {
             guard let scrollView = gestureRecognizer.view?.superview as? UIScrollView else { return }
 
-            let customZoomScale: CGFloat = (scrollView.minimumZoomScale + scrollView.maximumZoomScale) / 5 // Set your custom zoom level here
+            let customZoomScale: CGFloat = (scrollView.minimumZoomScale + scrollView.maximumZoomScale) / 5
 
             if scrollView.zoomScale < customZoomScale {
                 // Zoom in to the custom zoom scale
