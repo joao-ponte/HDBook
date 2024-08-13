@@ -8,6 +8,7 @@
 import SwiftUI
 import RealityKit
 import ARKit
+import InterfaceOrientation
 
 struct ARCameraView: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
@@ -18,6 +19,7 @@ struct ARCameraView: View {
             ARViewContainer().edgesIgnoringSafeArea(.all)
             TopBar(linkToPhotos: linkToPhotos)
         }
+        .interfaceOrientations(.portrait)
         .onAppear {
             Task {
                 await coordinator.resumeARSession()

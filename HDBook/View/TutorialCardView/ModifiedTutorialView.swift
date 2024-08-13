@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import InterfaceOrientation
 
 struct ModifiedTutorialView: View {
     @ObservedObject var viewModel: TutorialCardsViewModel
@@ -34,6 +35,7 @@ struct ModifiedTutorialView: View {
                 }
             }
         }
+        .interfaceOrientations(.portrait)
         .background(.black)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: Button(action: {

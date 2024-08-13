@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import InterfaceOrientation
 
 @main
 struct HDBookApp: App {
@@ -26,3 +27,4 @@ struct HDBookApp: App {
         }
     }
 }
+
