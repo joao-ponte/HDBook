@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import InterfaceOrientation
 
 struct TutorialView: View {
     @ObservedObject var viewModel: TutorialCardsViewModel
@@ -44,6 +45,7 @@ struct TutorialView: View {
                 .foregroundStyle(Color.white)
             }
         }
+        .interfaceOrientations(.portrait)
         .background(.black)
         .navigationBarBackButtonHidden(true)
         .onAppear {

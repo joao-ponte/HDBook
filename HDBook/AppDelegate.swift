@@ -8,6 +8,7 @@
 import UIKit
 import SwiftUI
 import FirebaseCore
+import InterfaceOrientation
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
@@ -23,6 +24,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         return true
     }
+    
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+            InterfaceOrientationCoordinator.shared.supportedOrientations
+        }
 
     func applicationWillResignActive(_ application: UIApplication) {}
     func applicationDidEnterBackground(_ application: UIApplication) {}

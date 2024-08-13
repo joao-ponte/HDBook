@@ -1,5 +1,5 @@
 {
-  "originHash" : "0d09fff1cc341edd7e7d04f4f8f513f6c19b14f88a2755457236c95a521067a3",
+  "originHash" : "d5926344d78ac5d84cba54ecc9f22c0d1b75731b2126629099a5a7c59e8d4ebb",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -125,6 +125,15 @@
       "state" : {
         "revision" : "d57a5aecf24a25b32ec4a74be2f5d0a995a47c4b",
         "version" : "1.27.0"
+      }
+    },
+    {
+      "identity" : "swiftui-interface-orientation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wvteijlingen/swiftui-interface-orientation",
+      "state" : {
+        "branch" : "main",
+        "revision" : "735bb1cbdad07e275ce7c53c16c3c56d448da947"
       }
     }
   ],

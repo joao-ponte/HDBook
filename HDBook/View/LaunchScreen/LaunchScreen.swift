@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Reachability
+import InterfaceOrientation
 
 struct LaunchScreen: View {
     @ObservedObject var viewModel: TutorialCardsViewModel
@@ -76,6 +77,7 @@ struct LaunchScreen: View {
                 }
             }
         }
+        .interfaceOrientations(.portrait)
         .toolbar(.hidden, for: .navigationBar)
         .navigationViewStyle(.stack)
     }

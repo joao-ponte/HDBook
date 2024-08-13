@@ -22,6 +22,7 @@
 		1DD1DB4B2C6A584D004239F0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB4A2C6A584D004239F0 /* Constants.swift */; };
 		1DD1DB4D2C6A5B13004239F0 /* FileManagerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB4C2C6A5B13004239F0 /* FileManagerExtensions.swift */; };
 		1DD1DB4F2C6A6104004239F0 /* AssetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB4E2C6A6104004239F0 /* AssetType.swift */; };
+		1DD1DB542C6B6AB2004239F0 /* InterfaceOrientation in Frameworks */ = {isa = PBXBuildFile; productRef = 1DD1DB532C6B6AB2004239F0 /* InterfaceOrientation */; };
 		1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7012C49367200CFA245 /* HDBookApp.swift */; };
 		1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7052C49367400CFA245 /* Assets.xcassets */; };
 		1DD7D7092C49367400CFA245 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7082C49367400CFA245 /* Preview Assets.xcassets */; };
@@ -113,6 +114,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DD1DB542C6B6AB2004239F0 /* InterfaceOrientation in Frameworks */,
 				1DD7D7312C4951C700CFA245 /* FirebaseStorage in Frameworks */,
 				1DD7D7382C4953F500CFA245 /* Reachability in Frameworks */,
 			);
@@ -320,6 +322,7 @@
 			packageProductDependencies = (
 				1DD7D7302C4951C700CFA245 /* FirebaseStorage */,
 				1DD7D7372C4953F500CFA245 /* Reachability */,
+				1DD1DB532C6B6AB2004239F0 /* InterfaceOrientation */,
 			);
 			productName = HDBook;
 			productReference = 1DD7D6FE2C49367200CFA245 /* HDBook.app */;
@@ -396,6 +399,7 @@
 			packageReferences = (
 				1DD7D72F2C4951C700CFA245 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				1DD7D7362C4953F500CFA245 /* XCRemoteSwiftPackageReference "Reachability" */,
+				1DD1DB522C6B6AB2004239F0 /* XCRemoteSwiftPackageReference "swiftui-interface-orientation" */,
 			);
 			productRefGroup = 1DD7D6FF2C49367200CFA245 /* Products */;
 			projectDirPath = "";
@@ -641,7 +645,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -674,7 +678,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -810,6 +814,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1DD1DB522C6B6AB2004239F0 /* XCRemoteSwiftPackageReference "swiftui-interface-orientation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wvteijlingen/swiftui-interface-orientation";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		1DD7D72F2C4951C700CFA245 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -829,6 +841,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1DD1DB532C6B6AB2004239F0 /* InterfaceOrientation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1DD1DB522C6B6AB2004239F0 /* XCRemoteSwiftPackageReference "swiftui-interface-orientation" */;
+			productName = InterfaceOrientation;
+		};
 		1DD7D7302C4951C700CFA245 /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1DD7D72F2C4951C700CFA245 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

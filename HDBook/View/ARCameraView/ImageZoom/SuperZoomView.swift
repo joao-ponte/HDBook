@@ -44,6 +44,7 @@ struct SuperZoomView: View {
                     }
             }
         }
+        .interfaceOrientations(.landscape)
     }
 
     private func loadImage() {
