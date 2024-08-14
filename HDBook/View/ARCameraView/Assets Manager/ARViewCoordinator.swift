@@ -23,6 +23,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     
     @Published var is360ViewActive = false
     @Published var isSuperZoomPresented: Bool = false
+    @Published var isFilmPresented: Bool = false
+    @Published var filmURL: URL?
     @Published var superZoomURL: URL?
     
     private var firebaseStorageService: FirebaseStorageService
@@ -89,43 +91,47 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     // MARK: - ARImageHandling
     
     internal func handleImageAnchor(_ imageAnchor: ARImageAnchor) {
-            let uuid = imageAnchor.identifier
-            videoAnchors[uuid] = Date()
-            
-            guard let referenceImageName = imageAnchor.referenceImage.name else {
-                print("Failed to get reference image name.")
-                return
-            }
-            
-            print("Image anchor detected: \(referenceImageName)")
-            
-            switch identifyAssetType(from: referenceImageName) {
-            case .video:
-                handleVideoAsset(for: referenceImageName, imageAnchor: imageAnchor, uuid: uuid)
-            case .image360:
-                handle360ImageAsset(for: referenceImageName, imageAnchor: imageAnchor)
-            case .model:
-                handle3DModelAsset(for: referenceImageName, imageAnchor: imageAnchor)
-            case .superZoom:
-                handleSuperZoomAsset(for: referenceImageName, imageAnchor: imageAnchor)
-            case .unknown:
-                print("No valid asset type found for tracked image: \(referenceImageName)")
-            }
+        let uuid = imageAnchor.identifier
+        videoAnchors[uuid] = Date()
+        
+        guard let referenceImageName = imageAnchor.referenceImage.name else {
+            print("Failed to get reference image name.")
+            return
         }
         
-        private func identifyAssetType(from referenceImageName: String) -> AssetType {
-            if referenceImageName.contains(Constants.videoSuffix) {
-                return .video
-            } else if referenceImageName.contains(Constants.image360Suffix) {
-                return .image360
-            } else if referenceImageName.contains(Constants.modelSuffix) {
-                return .model
-            } else if referenceImageName.contains(Constants.superZoomSuffix) {
-                return .superZoom
-            } else {
-                return .unknown
-            }
+        print("Image anchor detected: \(referenceImageName)")
+        
+        switch identifyAssetType(from: referenceImageName) {
+        case .video:
+            handleVideoAsset(for: referenceImageName, imageAnchor: imageAnchor, uuid: uuid)
+        case .image360:
+            handle360ImageAsset(for: referenceImageName, imageAnchor: imageAnchor)
+        case .model:
+            handle3DModelAsset(for: referenceImageName, imageAnchor: imageAnchor)
+        case .superZoom:
+            handleSuperZoomAsset(for: referenceImageName, imageAnchor: imageAnchor)
+        case .film:
+            handleFilmAsset(for: referenceImageName, imageAnchor: imageAnchor)
+        case .unknown:
+            print("No valid asset type found for tracked image: \(referenceImageName)")
         }
+    }
+    
+    private func identifyAssetType(from referenceImageName: String) -> AssetType {
+        if referenceImageName.contains(Constants.videoSuffix) {
+            return .video
+        } else if referenceImageName.contains(Constants.image360Suffix) {
+            return .image360
+        } else if referenceImageName.contains(Constants.modelSuffix) {
+            return .model
+        } else if referenceImageName.contains(Constants.superZoomSuffix) {
+            return .superZoom
+        } else if referenceImageName.contains(Constants.filmSuffix) {
+            return .film
+        } else {
+            return .unknown
+        }
+    }
     
     private func getAssetURL(for referenceImageName: String, localURLProvider: (String) -> URL?, directory: URL, fileExtension: String) -> URL? {
         if let localURL = localURLProvider(referenceImageName) {
@@ -135,7 +141,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             return directory.appendingPathComponent(fileName).appendingPathExtension(fileExtension)
         }
     }
-
+    
     private func getVideoURL(for referenceImageName: String) -> URL? {
         return getAssetURL(
             for: referenceImageName,
@@ -144,7 +150,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             fileExtension: Constants.videoExtension
         )
     }
-
+    
     private func getImage360URL(for referenceImageName: String) -> URL? {
         return getAssetURL(
             for: referenceImageName,
@@ -153,7 +159,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             fileExtension: Constants.image360Extension
         )
     }
-
+    
     private func get3DModelsURL(for referenceImageName: String) -> URL? {
         return getAssetURL(
             for: referenceImageName,
@@ -162,7 +168,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             fileExtension: Constants.modelExtension
         )
     }
-
+    
     private func getSuperZoomURL(for referenceImageName: String) -> URL? {
         return getAssetURL(
             for: referenceImageName,
@@ -172,6 +178,14 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         )
     }
     
+    private func getFilmURL(for referenceImageName: String) -> URL? {
+        return getAssetURL(
+            for: referenceImageName,
+            localURLProvider: firebaseStorageService.getLocalFilmURL,
+            directory: firebaseStorageService.filmsDirectory,
+            fileExtension: Constants.filmExtension
+        )
+    }
     
     private func handleVideoAsset(for referenceImageName: String, imageAnchor: ARImageAnchor, uuid: UUID) {
         guard let videoURL = getVideoURL(for: referenceImageName) else {
@@ -249,6 +263,24 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             }
         } else {
             print("SuperZoom image file does not exist at path: \(superZoomURL.path)")
+        }
+    }
+    
+    private func handleFilmAsset(for referenceImageName: String, imageAnchor: ARImageAnchor) {
+        guard let filmURL = getFilmURL(for: referenceImageName) else {
+            print("No valid film asset found for tracked image: \(referenceImageName)")
+            return
+        }
+
+        if FileManager.default.fileExists(atPath: filmURL.path) {
+            if let arView = arView {
+                presentFilmView(filmURL: filmURL)
+                print("Presenting film view for image: \(referenceImageName)")
+            } else {
+                print("Error: ARView is nil.")
+            }
+        } else {
+            print("Film file does not exist at path: \(filmURL.path)")
         }
     }
     
@@ -377,7 +409,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             }
         }
     }
-
+    
     // MARK: - Additional Functions
     
     func exit360View() {
@@ -426,7 +458,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         self.isSuperZoomPresented = true
         pauseARSession()
     }
-
+    
     func exitSuperZoomView() {
         self.superZoomURL = nil
         self.isSuperZoomPresented = false
@@ -434,5 +466,20 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             await resumeARSession()
         }
         print("Exited SuperZoom view.")
+    }
+    
+    func presentFilmView(filmURL: URL) {
+        self.filmURL = filmURL
+        self.isFilmPresented = true
+        pauseARSession()
+    }
+
+    func exitFilmView() {
+        self.filmURL = nil
+        self.isFilmPresented = false
+        Task {
+            await resumeARSession()
+        }
+        print("Exited Film view.")
     }
 }
