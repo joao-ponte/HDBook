@@ -305,23 +305,20 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         
         let imageAnchorEntity = AnchorEntity(anchor: imageAnchor)
         
-        // Check if the model is the HDLogo_ARM and apply specific configuration
         if imageAnchor.referenceImage.name == "HDLogo_ARM" {
-            // Set the model's position to be closer to the origin of the image anchor right/high/left
+            // image anchor right/high/left
             modelEntity.setPosition(SIMD3<Float>(0.01, 0.05, 0), relativeTo: imageAnchorEntity)
             
-            // Adjust the scale
             modelEntity.scale = [0.0075, 0.0075, 0.0075]
             
-            // Apply rotation to the model around the x-axis
             let rotation = simd_quatf(angle: GLKMathDegreesToRadians(180), axis: SIMD3<Float>(1, 0, 0))
             modelEntity.setOrientation(rotation, relativeTo: imageAnchorEntity)
             
             print("HDLogo_ARM specific configuration applied.")
         } else {
-            // Default configuration for other 3D models
+            // others 3D models
             modelEntity.setPosition(SIMD3<Float>(0, 0, 0), relativeTo: imageAnchorEntity)
-            modelEntity.scale = [0.10, 0.10, 0.10]
+            modelEntity.scale = [0.15, 0.15, 0.15]
             
             print("Default configuration applied.")
         }
@@ -340,6 +337,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     
     func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
         let currentTimestamp = Date()
+        
         for anchor in anchors {
             if let imageAnchor = anchor as? ARImageAnchor {
                 let uuid = imageAnchor.identifier
@@ -357,18 +355,29 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
                         print("Tracking image: \(referenceImageName)")
                     }
                 } else if activeAnchors[uuid] == nil {
-                    // Handle newly detected anchors for 3D models and 360 images if needed
                 }
             }
         }
         
         for (uuid, lastSeen) in videoAnchors {
-            if currentTimestamp.timeIntervalSince(lastSeen) > 1 {
-                handleTrackingTimeout(for: uuid)
+            if let imageAnchor = anchors.compactMap({ $0 as? ARImageAnchor }).first(where: { $0.identifier == uuid }),
+               let referenceImageName = imageAnchor.referenceImage.name {
+                
+                var timeoutInterval: TimeInterval = 1
+                
+                if referenceImageName.contains("_CIN") {
+                    timeoutInterval = 1
+                } else if referenceImageName.contains("_ARM") {
+                    timeoutInterval = 30
+                }
+                
+                if currentTimestamp.timeIntervalSince(lastSeen) > timeoutInterval {
+                    handleTrackingTimeout(for: uuid)
+                }
             }
         }
     }
-    
+
     // MARK: - Additional Functions
     
     func exit360View() {
