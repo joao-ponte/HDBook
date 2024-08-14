@@ -1,0 +1,16 @@
+{
+  "images" : [
+    {
+      "filename" : "MAYDAY_AERIAL_CIN-21.jpg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "unit" : "centimeters",
+    "width" : 21
+  }
+}
