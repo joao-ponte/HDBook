@@ -31,6 +31,7 @@ struct Constants {
     static let assetTypeImage360 = "image360"
     static let assetTypeModel = "model"
     static let assetTypeSuperZoom = "superZoom"
-    static let filmSuffix = "_FLM"
+    static let assetTypeFilm = "film"
+
 }
 
