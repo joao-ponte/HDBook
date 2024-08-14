@@ -8,5 +8,5 @@
 import Foundation
 
 enum AssetType {
-    case video, image360, model, superZoom, unknown
+    case video, image360, model, superZoom, film, unknown
 }
