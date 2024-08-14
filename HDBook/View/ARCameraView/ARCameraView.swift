@@ -13,7 +13,7 @@ import InterfaceOrientation
 struct ARCameraView: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
     let linkToPhotos = URL(string: "https://www.hayesdavidson.com/portfolio/360s")!
-
+    
     var body: some View {
         ZStack(alignment: .top) {
             ARViewContainer().edgesIgnoringSafeArea(.all)
@@ -35,6 +35,12 @@ struct ARCameraView: View {
         .fullScreenCover(isPresented: $coordinator.isSuperZoomPresented) {
             if let superZoomURL = coordinator.superZoomURL {
                 SuperZoomView(imageURL: superZoomURL)
+                    .environmentObject(coordinator)
+            }
+        }
+        .fullScreenCover(isPresented: $coordinator.isFilmPresented) {
+            if let filmURL = coordinator.filmURL {
+                FilmView(filmURL: filmURL)
                     .environmentObject(coordinator)
             }
         }
@@ -88,9 +94,9 @@ struct TopBar: View {
 
 struct ARViewContainer: UIViewRepresentable {
     @EnvironmentObject var coordinator: ARViewCoordinator
-
+    
     typealias UIViewType = ARView
-
+    
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero)
         Task {
@@ -98,9 +104,9 @@ struct ARViewContainer: UIViewRepresentable {
         }
         return arView
     }
-
+    
     func updateUIView(_ uiView: ARView, context: Context) {}
-
+    
     func makeCoordinator() -> ARViewCoordinator {
         return coordinator
     }
