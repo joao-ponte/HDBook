@@ -16,46 +16,48 @@ struct FilmView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            if let player = player {
-                VideoPlayer(player: player)
-                    .overlay(
-                        verticalSizeClass == .compact ? nil :
-                        HStack {
-                            Spacer()
-                            Button(action: {
-                                coordinator.exitFilmView()
-                            }) {
-                                Image(systemName: "xmark.circle")
-                                    .foregroundColor(.green)
-                                    .font(.system(size: 28))
-                                    .padding()
-                            }
+            VStack(spacing: 0) { // Use spacing to reduce the gap
+                if verticalSizeClass != .compact {
+                    HStack {
+                        Button(action: {
+                            coordinator.exitFilmView()
+                        }) {
+                            Image(systemName: "arrow.backward.circle")
+                                .foregroundColor(.green)
+                                .font(.system(size: 28))
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                        .padding(.top, geometry.safeAreaInsets.top + 20)
-                        .padding(.trailing, geometry.safeAreaInsets.trailing + 20)
-                    )
-                    .edgesIgnoringSafeArea(.all)
-                    .gesture(
-                        DragGesture().onEnded { value in
-                            if value.translation.width > 100 || value.translation.height > 100 {
-                                coordinator.exitFilmView()
+                        Spacer()
+                    }
+                    .padding(.top)
+                    .padding(.leading)
+                }
+                
+                if let player = player {
+                    VideoPlayer(player: player)
+                        .edgesIgnoringSafeArea(.all)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .gesture(
+                            DragGesture().onEnded { value in
+                                if value.translation.height > 100 {
+                                    coordinator.exitFilmView()
+                                }
                             }
+                        )
+                        .onAppear {
+                            player.play()
                         }
-                    )
-                    .onAppear {
-                        player.play()
-                    }
-                    .onDisappear {
-                        player.pause()
-                    }
-            } else {
-                ProgressView("Loading...")
-                    .onAppear {
-                        player = AVPlayer(url: filmURL)
-                    }
+                        .onDisappear {
+                            player.pause()
+                        }
+                } else {
+                    ProgressView("Loading...")
+                        .onAppear {
+                            player = AVPlayer(url: filmURL)
+                        }
+                }
             }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .interfaceOrientations(.landscape)
         }
-        .interfaceOrientations(.landscape)
     }
 }
