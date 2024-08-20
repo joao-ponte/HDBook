@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "oakridgehero_CIN-29.jpg",
+      "filename" : "FS500_Four_Seasons_Cabo_Book_FLM-19.jpg",
       "idiom" : "universal"
     }
   ],
@@ -10,6 +10,7 @@
     "version" : 1
   },
   "properties" : {
-    "width" : 29
+    "unit" : "centimeters",
+    "width" : 19
   }
 }

@@ -23,6 +23,8 @@
 		1DD1DB4D2C6A5B13004239F0 /* FileManagerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB4C2C6A5B13004239F0 /* FileManagerExtensions.swift */; };
 		1DD1DB4F2C6A6104004239F0 /* AssetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB4E2C6A6104004239F0 /* AssetType.swift */; };
 		1DD1DB542C6B6AB2004239F0 /* InterfaceOrientation in Frameworks */ = {isa = PBXBuildFile; productRef = 1DD1DB532C6B6AB2004239F0 /* InterfaceOrientation */; };
+		1DD1DB582C6D07C5004239F0 /* Films.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD1DB572C6D07C5004239F0 /* Films.scnassets */; };
+		1DD1DB5A2C6D1300004239F0 /* FilmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB592C6D1300004239F0 /* FilmView.swift */; };
 		1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7012C49367200CFA245 /* HDBookApp.swift */; };
 		1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7052C49367400CFA245 /* Assets.xcassets */; };
 		1DD7D7092C49367400CFA245 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7082C49367400CFA245 /* Preview Assets.xcassets */; };
@@ -82,6 +84,8 @@
 		1DD1DB4A2C6A584D004239F0 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		1DD1DB4C2C6A5B13004239F0 /* FileManagerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerExtensions.swift; sourceTree = "<group>"; };
 		1DD1DB4E2C6A6104004239F0 /* AssetType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetType.swift; sourceTree = "<group>"; };
+		1DD1DB572C6D07C5004239F0 /* Films.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Films.scnassets; sourceTree = "<group>"; };
+		1DD1DB592C6D1300004239F0 /* FilmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilmView.swift; sourceTree = "<group>"; };
 		1DD7D6FE2C49367200CFA245 /* HDBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HDBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7D7012C49367200CFA245 /* HDBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookApp.swift; sourceTree = "<group>"; };
 		1DD7D7052C49367400CFA245 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -206,6 +210,7 @@
 				1D164F882C513B7E004C0F75 /* Videos.scnassets */,
 				1D164F9E2C58FF58004C0F75 /* 3DModels.scnassets */,
 				1DB8F6BE2C5A9CC500C98E74 /* SuperZoom.scnassets */,
+				1DD1DB572C6D07C5004239F0 /* Films.scnassets */,
 			);
 			path = HDBook;
 			sourceTree = "<group>";
@@ -284,9 +289,10 @@
 		1DD7D74C2C4958AC00CFA245 /* ARCameraView */ = {
 			isa = PBXGroup;
 			children = (
-				1D164F8E2C513EEC004C0F75 /* Assets Manager */,
 				1DD7D7392C4956D600CFA245 /* ARCameraView.swift */,
+				1D164F8E2C513EEC004C0F75 /* Assets Manager */,
 				1DB8F6CA2C66576200C98E74 /* ImageZoom */,
+				1DD1DB592C6D1300004239F0 /* FilmView.swift */,
 			);
 			path = ARCameraView;
 			sourceTree = "<group>";
@@ -423,6 +429,7 @@
 				1D164F872C513B6C004C0F75 /* 360View.scnassets in Resources */,
 				1DB8F6BF2C5A9CC500C98E74 /* SuperZoom.scnassets in Resources */,
 				1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */,
+				1DD1DB582C6D07C5004239F0 /* Films.scnassets in Resources */,
 				1DD7D7592C495FFE00CFA245 /* GoogleService-Info.plist in Resources */,
 				1D164F892C513B7E004C0F75 /* Videos.scnassets in Resources */,
 			);
@@ -469,6 +476,7 @@
 				1DB8F6C92C66574600C98E74 /* CGSize-extension.swift in Sources */,
 				1DD7D7422C4957B000CFA245 /* TutorialView.swift in Sources */,
 				1DD7D74F2C4958E700CFA245 /* AppColors.swift in Sources */,
+				1DD1DB5A2C6D1300004239F0 /* FilmView.swift in Sources */,
 				1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */,
 				1D164F922C5144A8004C0F75 /* ARProtocols.swift in Sources */,
 				1D164F942C515F9B004C0F75 /* ModelManager.swift in Sources */,
