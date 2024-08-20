@@ -16,7 +16,7 @@ struct FilmView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 0) { // Use spacing to reduce the gap
+            VStack(spacing: 0) {
                 if verticalSizeClass != .compact {
                     HStack {
                         Button(action: {
