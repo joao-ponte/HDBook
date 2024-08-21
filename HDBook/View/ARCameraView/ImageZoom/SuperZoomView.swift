@@ -40,6 +40,7 @@ struct SuperZoomView: View {
                     ) : AnyView(EmptyView())
                 )
                 .edgesIgnoringSafeArea(.all)
+                .background(Color.black)
             } else {
                 ProgressView()
                     .onAppear {
