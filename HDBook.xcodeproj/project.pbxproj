@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1D12257F2C7614E200B51044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7052C49367400CFA245 /* Assets.xcassets */; };
+		1D1225822C76237800B51044 /* NoInternetAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1225812C76237800B51044 /* NoInternetAlertView.swift */; };
 		1D164F872C513B6C004C0F75 /* 360View.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D164F862C513B6C004C0F75 /* 360View.scnassets */; };
 		1D164F892C513B7E004C0F75 /* Videos.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D164F882C513B7E004C0F75 /* Videos.scnassets */; };
 		1D164F8B2C513E63004C0F75 /* VideoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D164F8A2C513E63004C0F75 /* VideoManager.swift */; };
@@ -73,6 +74,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1D1225812C76237800B51044 /* NoInternetAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetAlertView.swift; sourceTree = "<group>"; };
 		1D164F862C513B6C004C0F75 /* 360View.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = 360View.scnassets; sourceTree = "<group>"; };
 		1D164F882C513B7E004C0F75 /* Videos.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Videos.scnassets; sourceTree = "<group>"; };
 		1D164F8A2C513E63004C0F75 /* VideoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoManager.swift; sourceTree = "<group>"; };
@@ -149,6 +151,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1D1225802C76236400B51044 /* AlertViews */ = {
+			isa = PBXGroup;
+			children = (
+				1D1225812C76237800B51044 /* NoInternetAlertView.swift */,
+			);
+			path = AlertViews;
+			sourceTree = "<group>";
+		};
 		1D164F8E2C513EEC004C0F75 /* Assets Manager */ = {
 			isa = PBXGroup;
 			children = (
@@ -289,6 +299,7 @@
 		1DD7D7402C49578500CFA245 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				1D1225802C76236400B51044 /* AlertViews */,
 				1D164F8E2C513EEC004C0F75 /* Assets Manager */,
 				1DD1DB5F2C760AF1004239F0 /* WebView */,
 				1DD1DB5E2C75F874004239F0 /* 360View */,
@@ -505,6 +516,7 @@
 				1DD7D7462C4957EF00CFA245 /* ModifiedTutorialCardView.swift in Sources */,
 				1DD1DB5C2C75F514004239F0 /* View+Extensions.swift in Sources */,
 				1DD7D7352C4953DB00CFA245 /* LaunchScreen.swift in Sources */,
+				1D1225822C76237800B51044 /* NoInternetAlertView.swift in Sources */,
 				1DD7D73C2C49570900CFA245 /* TutorialCardsViewModel.swift in Sources */,
 				1DB8F6C52C66562300C98E74 /* ImageZoomView.swift in Sources */,
 				1D164F8B2C513E63004C0F75 /* VideoManager.swift in Sources */,

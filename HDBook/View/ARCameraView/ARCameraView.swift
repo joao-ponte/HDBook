@@ -16,8 +16,18 @@ struct ARCameraView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            ARViewContainer().edgesIgnoringSafeArea(.all)
+            ARViewContainer()
+                .edgesIgnoringSafeArea(.all)
+            
             TopBar(linkToPhotos: linkToPhotos)
+            
+            if coordinator.showAlert {
+                NoInternetAlertView {
+                    coordinator.dismissAlertAndResetARSession()
+                }
+                .transition(.opacity)
+                .zIndex(1)
+            }
         }
         .interfaceOrientations(.portrait)
         .onAppear {
@@ -46,6 +56,8 @@ struct ARCameraView: View {
         }
     }
 }
+
+
 
 struct TopBar: View {
     let linkToPhotos: URL

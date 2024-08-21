@@ -26,6 +26,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     @Published var isFilmPresented: Bool = false
     @Published var filmURL: URL?
     @Published var superZoomURL: URL?
+    @Published var showAlert = false
     
     private var firebaseStorageService: FirebaseStorageService
     
@@ -311,7 +312,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         if ConnectivityManager.isConnectedToInternet() {
             presentWebView(url: url)
         } else {
-            NotificationManager.showOfflineNotification()
+            print("No internet connection. Showing custom alert...")
+            showAlert = true
         }
     }
     
@@ -520,4 +522,23 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             WebViewManager.presentWebView(url: url, in: viewController)
         }
     }
+    
+    func dismissAlertAndResetARSession() {
+        showAlert = false
+        Task {
+            await resetARSession()
+        }
+    }
+    
+    private func resetARSession() async {
+        guard let arView = arView else { return }
+        do {
+            let configuration = try createARConfiguration()
+            await arView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+            print("AR session reset after dismissing alert.")
+        } catch {
+            print("Failed to reset AR session: \(error)")
+        }
+    }
+    
 }
