@@ -26,8 +26,10 @@
 		1DD1DB582C6D07C5004239F0 /* Films.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD1DB572C6D07C5004239F0 /* Films.scnassets */; };
 		1DD1DB5A2C6D1300004239F0 /* FilmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB592C6D1300004239F0 /* FilmView.swift */; };
 		1DD1DB5C2C75F514004239F0 /* View+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB5B2C75F514004239F0 /* View+Extensions.swift */; };
+		1DD1DB612C760B56004239F0 /* WebViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB602C760B56004239F0 /* WebViewManager.swift */; };
+		1DD1DB632C760C02004239F0 /* ConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB622C760C02004239F0 /* ConnectivityManager.swift */; };
+		1DD1DB652C760C29004239F0 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD1DB642C760C29004239F0 /* NotificationManager.swift */; };
 		1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7012C49367200CFA245 /* HDBookApp.swift */; };
-		1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7052C49367400CFA245 /* Assets.xcassets */; };
 		1DD7D7092C49367400CFA245 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DD7D7082C49367400CFA245 /* Preview Assets.xcassets */; };
 		1DD7D7132C49367500CFA245 /* HDBookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D7122C49367500CFA245 /* HDBookTests.swift */; };
 		1DD7D71D2C49367500CFA245 /* HDBookUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7D71C2C49367500CFA245 /* HDBookUITests.swift */; };
@@ -88,6 +90,9 @@
 		1DD1DB572C6D07C5004239F0 /* Films.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Films.scnassets; sourceTree = "<group>"; };
 		1DD1DB592C6D1300004239F0 /* FilmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilmView.swift; sourceTree = "<group>"; };
 		1DD1DB5B2C75F514004239F0 /* View+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extensions.swift"; sourceTree = "<group>"; };
+		1DD1DB602C760B56004239F0 /* WebViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewManager.swift; sourceTree = "<group>"; };
+		1DD1DB622C760C02004239F0 /* ConnectivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityManager.swift; sourceTree = "<group>"; };
+		1DD1DB642C760C29004239F0 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		1DD7D6FE2C49367200CFA245 /* HDBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HDBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD7D7012C49367200CFA245 /* HDBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDBookApp.swift; sourceTree = "<group>"; };
 		1DD7D7052C49367400CFA245 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -191,6 +196,14 @@
 			path = 360View;
 			sourceTree = "<group>";
 		};
+		1DD1DB5F2C760AF1004239F0 /* WebView */ = {
+			isa = PBXGroup;
+			children = (
+				1DD1DB602C760B56004239F0 /* WebViewManager.swift */,
+			);
+			path = WebView;
+			sourceTree = "<group>";
+		};
 		1DD7D6F52C49367200CFA245 = {
 			isa = PBXGroup;
 			children = (
@@ -230,6 +243,7 @@
 				1D164F9E2C58FF58004C0F75 /* 3DModels.scnassets */,
 				1DB8F6BE2C5A9CC500C98E74 /* SuperZoom.scnassets */,
 				1DD1DB572C6D07C5004239F0 /* Films.scnassets */,
+				1DD1DB642C760C29004239F0 /* NotificationManager.swift */,
 			);
 			path = HDBook;
 			sourceTree = "<group>";
@@ -275,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				1D164F8E2C513EEC004C0F75 /* Assets Manager */,
+				1DD1DB5F2C760AF1004239F0 /* WebView */,
 				1DD1DB5E2C75F874004239F0 /* 360View */,
 				1DD1DB5D2C75F7CC004239F0 /* FilmView */,
 				1DB8F6CA2C66576200C98E74 /* ImageZoom */,
@@ -305,6 +320,7 @@
 			isa = PBXGroup;
 			children = (
 				1DD7D72D2C49512100CFA245 /* FirebaseStorageService.swift */,
+				1DD1DB622C760C02004239F0 /* ConnectivityManager.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -447,7 +463,6 @@
 				1DD7D7092C49367400CFA245 /* Preview Assets.xcassets in Resources */,
 				1D164F872C513B6C004C0F75 /* 360View.scnassets in Resources */,
 				1DB8F6BF2C5A9CC500C98E74 /* SuperZoom.scnassets in Resources */,
-				1DD7D7062C49367400CFA245 /* Assets.xcassets in Resources */,
 				1DD1DB582C6D07C5004239F0 /* Films.scnassets in Resources */,
 				1DD7D7592C495FFE00CFA245 /* GoogleService-Info.plist in Resources */,
 				1D164F892C513B7E004C0F75 /* Videos.scnassets in Resources */,
@@ -482,6 +497,7 @@
 				1DD1DB4D2C6A5B13004239F0 /* FileManager+Extensions.swift in Sources */,
 				1DD7D73A2C4956D600CFA245 /* ARCameraView.swift in Sources */,
 				1D164F8D2C513E7E004C0F75 /* ImageManager.swift in Sources */,
+				1DD1DB612C760B56004239F0 /* WebViewManager.swift in Sources */,
 				1DD7D74A2C49583900CFA245 /* TutorialCards.swift in Sources */,
 				1DD7D7332C4952CE00CFA245 /* ARViewCoordinator.swift in Sources */,
 				1DD7D7462C4957EF00CFA245 /* ModifiedTutorialCardView.swift in Sources */,
@@ -492,9 +508,11 @@
 				1D164F8B2C513E63004C0F75 /* VideoManager.swift in Sources */,
 				1DB8F6CF2C665B6000C98E74 /* SuperZoomView.swift in Sources */,
 				1DD7D72E2C49512100CFA245 /* FirebaseStorageService.swift in Sources */,
+				1DD1DB632C760C02004239F0 /* ConnectivityManager.swift in Sources */,
 				1DD7D73E2C49574E00CFA245 /* TutorialCardView.swift in Sources */,
 				1DB8F6C92C66574600C98E74 /* CGSize+Extensions.swift in Sources */,
 				1DD7D7422C4957B000CFA245 /* TutorialView.swift in Sources */,
+				1DD1DB652C760C29004239F0 /* NotificationManager.swift in Sources */,
 				1DD7D74F2C4958E700CFA245 /* AppColors.swift in Sources */,
 				1DD1DB5A2C6D1300004239F0 /* FilmView.swift in Sources */,
 				1DD7D7022C49367200CFA245 /* HDBookApp.swift in Sources */,
