@@ -112,6 +112,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             handleSuperZoomAsset(for: referenceImageName, imageAnchor: imageAnchor)
         case .film:
             handleFilmAsset(for: referenceImageName, imageAnchor: imageAnchor)
+        case .web:
+            handleWebAsset(for: referenceImageName, imageAnchor: imageAnchor)
         case .unknown:
             print("No valid asset type found for tracked image: \(referenceImageName)")
         }
@@ -128,6 +130,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             return .superZoom
         } else if referenceImageName.contains(Constants.filmSuffix) {
             return .film
+        } else if referenceImageName.contains(Constants.webSuffix) {
+            return .web
         } else {
             return .unknown
         }
@@ -230,7 +234,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         }
         
         if FileManager.default.fileExists(atPath: modelsURL.path) {
-            if let arView = arView {
+            if arView != nil {
                 do {
                     print("Attempting to load model from URL: \(modelsURL)")
                     let modelEntity = try modelManager.loadModel(from: modelsURL)
@@ -254,7 +258,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         }
         
         if FileManager.default.fileExists(atPath: superZoomURL.path) {
-            if let arView = arView {
+            if arView != nil {
                 presentSuperZoomView(superZoomURL: superZoomURL)
                 pauseARSession()
                 print("Presenting SuperZoom view for image: \(referenceImageName)")
@@ -271,9 +275,9 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             print("No valid film asset found for tracked image: \(referenceImageName)")
             return
         }
-
+        
         if FileManager.default.fileExists(atPath: filmURL.path) {
-            if let arView = arView {
+            if arView != nil {
                 presentFilmView(filmURL: filmURL)
                 print("Presenting film view for image: \(referenceImageName)")
             } else {
@@ -296,6 +300,19 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         activeAnchor = AnchorEntity(anchor: imageAnchor)
         arView.scene.addAnchor(activeAnchor!)
         print("360 image screen placed for image anchor: \(imageAnchor.referenceImage.name ?? "")")
+    }
+    
+    private func handleWebAsset(for referenceImageName: String, imageAnchor: ARImageAnchor) {
+        guard let webAsset = Constants.WebAssets(rawValue: referenceImageName), let url = webAsset.url else {
+            print("No valid web URL found for tracked image: \(referenceImageName)")
+            return
+        }
+        
+        if ConnectivityManager.isConnectedToInternet() {
+            presentWebView(url: url)
+        } else {
+            NotificationManager.showOfflineNotification()
+        }
     }
     
     // MARK: - ARVideoHandling
@@ -363,6 +380,21 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         print("3D model placed for UUID: \(uuid)")
         print("Model entity's final position: \(modelEntity.position)")
     }
+    
+    private func presentWebViewConfirmation(url: URL) {
+        let alert = UIAlertController(title: "Open Webpage", message: "Do you want to open this webpage?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Open", style: .default, handler: { _ in
+            if let viewController = UIApplication.shared.windows.first?.rootViewController {
+                WebViewManager.presentWebView(url: url, in: viewController)
+            }
+        }))
+        
+        if let viewController = UIApplication.shared.windows.first?.rootViewController {
+            viewController.present(alert, animated: true, completion: nil)
+        }
+    }
+    
     
     
     // MARK: - ARSessionDelegate
@@ -473,7 +505,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         self.isFilmPresented = true
         pauseARSession()
     }
-
+    
     func exitFilmView() {
         self.filmURL = nil
         self.isFilmPresented = false
@@ -481,5 +513,11 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             await resumeARSession()
         }
         print("Exited Film view.")
+    }
+    
+    private func presentWebView(url: URL) {
+        if let viewController = UIApplication.shared.windows.first?.rootViewController {
+            WebViewManager.presentWebView(url: url, in: viewController)
+        }
     }
 }
