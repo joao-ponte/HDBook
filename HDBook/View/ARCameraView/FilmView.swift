@@ -7,17 +7,19 @@
 
 import SwiftUI
 import AVKit
+import InterfaceOrientation
 
 struct FilmView: View {
     let filmURL: URL
     @EnvironmentObject var coordinator: ARViewCoordinator
     @State private var player: AVPlayer?
-    @Environment(\.verticalSizeClass) var verticalSizeClass
+
+    @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
 
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                if verticalSizeClass != .compact {
+                if !isLandscape {
                     HStack {
                         Button(action: {
                             coordinator.exitFilmView()
@@ -57,7 +59,15 @@ struct FilmView: View {
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
+            .background(Color.black)
+            .onRotate { newOrientation in
+                currentOrientation = newOrientation
+            }
             .interfaceOrientations(.landscape)
         }
+    }
+    
+    private var isLandscape: Bool {
+        return currentOrientation.isLandscape
     }
 }

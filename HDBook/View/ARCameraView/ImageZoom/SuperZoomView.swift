@@ -12,7 +12,7 @@ struct SuperZoomView: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
     @State private var uiImage: UIImage? = nil
     @State private var zoomState: ZoomState = .min
-    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
 
     var body: some View {
         GeometryReader { geometry in
@@ -25,7 +25,7 @@ struct SuperZoomView: View {
                     content: UIImageView(image: uiImage)
                 )
                 .overlay(
-                    verticalSizeClass != .compact ? AnyView(
+                    !isLandscape ? AnyView(
                         Button(action: {
                             coordinator.exitSuperZoomView()
                         }) {
@@ -48,7 +48,14 @@ struct SuperZoomView: View {
                     }
             }
         }
+        .onRotate { newOrientation in
+            currentOrientation = newOrientation
+        }
         .interfaceOrientations(.landscape)
+    }
+
+    private var isLandscape: Bool {
+        return currentOrientation.isLandscape
     }
 
     private func loadImage() {
