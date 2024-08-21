@@ -26,12 +26,28 @@ struct Constants {
     static let modelSuffix = "_ARM"
     static let superZoomSuffix = "_SPZ"
     static let filmSuffix = "_FLM"
+    static let webSuffix = "_WEB"
     
     static let assetTypeVideo = "video"
     static let assetTypeImage360 = "image360"
     static let assetTypeModel = "model"
     static let assetTypeSuperZoom = "superZoom"
     static let assetTypeFilm = "film"
-
+    static let assetTypeWeb = "web"
+    
+    
+    enum WebAssets: String {
+        case langtownhouse = "Langtownhouse_WEB-18"
+        case hdStories = "HDStories_WEB-18"
+        
+        var url: URL? {
+            switch self {
+            case .langtownhouse:
+                return URL(string: "https://app.envisionvr.net/?intent=view/HY01")
+            case .hdStories:
+                return URL(string: "https://www.hayesdavidson.com/stories/planning-images-for-a-sensitive-project-in-a-heritage-setting")
+            }
+        }
+    }
 }
 
