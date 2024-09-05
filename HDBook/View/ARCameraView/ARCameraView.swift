@@ -19,7 +19,7 @@ struct ARCameraView: View {
             ARViewContainer()
                 .edgesIgnoringSafeArea(.all)
             
-            TopBar(linkToPhotos: linkToPhotos)
+            TopBar()
             
             if coordinator.showAlert {
                 NoInternetAlertView {
@@ -57,10 +57,7 @@ struct ARCameraView: View {
     }
 }
 
-
-
 struct TopBar: View {
-    let linkToPhotos: URL
     @EnvironmentObject var coordinator: ARViewCoordinator
     var body: some View {
         HStack {
@@ -75,16 +72,6 @@ struct TopBar: View {
                 }
                 .padding()
             } else {
-                ShareLink(item: linkToPhotos) {
-                    Text("Image Library")
-                }
-                .padding(10)
-                .font(Font.custom("CaslonDoric-Medium", size: 12))
-                .foregroundStyle(Color.green)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.green, lineWidth: 2)
-                )
                 Spacer()
                 NavigationLink("Tutorial") {
                     ModifiedTutorialView(viewModel: TutorialCardsViewModel())
