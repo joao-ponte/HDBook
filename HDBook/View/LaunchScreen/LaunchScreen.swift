@@ -8,6 +8,7 @@
 import SwiftUI
 import Reachability
 import InterfaceOrientation
+import SceneKit
 
 struct LaunchScreen: View {
     @ObservedObject var viewModel: TutorialCardsViewModel
@@ -18,9 +19,22 @@ struct LaunchScreen: View {
     @State private var downloadProgress: Float = 0.0
     @State private var isOffline = false
     @State private var showLaunchButton = false
-    @State private var isLoading = false
     @EnvironmentObject var coordinator: ARViewCoordinator
     private let reachability = try! Reachability()
+    
+    // Add a boolean to control whether to check for assets
+    @State private var shouldCheckForAssets: Bool = true
+    
+    @State private var scene: SCNScene? = {
+        guard let url = Bundle.main.url(forResource: "HDLogo_ARM", withExtension: "usdz", subdirectory: "3DModels.scnassets"),
+              let scene = try? SCNScene(url: url, options: nil) else {
+            fatalError("Unable to load model named HDLogo_ARM.usdz from 3DModels.scnassets")
+        }
+        return scene
+    }()
+    
+    @State private var startColor: Color = Color(red: 0.9, green: 0.1, blue: 0.1)
+    @State private var endColor: Color = Color(red: 0.3, green: 0, blue: 0)
     
     init(viewModel: TutorialCardsViewModel) {
         self.viewModel = viewModel
@@ -28,36 +42,22 @@ struct LaunchScreen: View {
     
     var body: some View {
         NavigationView {
-            GeometryReader {geometry in
+            GeometryReader { geometry in
                 ZStack {
-                    Color.red
-                    VStack {
-                        Spacer()
-                        Spacer()
+                    LinearGradient(gradient: Gradient(colors: [startColor, endColor]),
+                                   startPoint: .topLeading,
+                                   endPoint: .bottomTrailing)
+                    .ignoresSafeArea()
+                    .animation(.easeInOut(duration: 1.0))
+                    
+                    VStack(spacing: 0) {
+                        // 3D Model View
+                        CustomModelView(scene: $scene, onRotate: updateGradientColors)
+                            .frame(width: geometry.size.width, height: geometry.size.height * 0.5)
+                            .cornerRadius(20)
                         
-                        Image("Logotype")
-                            .resizable()
-                            .scaledToFit()
-                            .padding(.horizontal, geometry.size.width * 0.09)
-                        
-                        Text("HD Book")
-                            .font(.custom("CaslonDoric-Medium", size: geometry.size.width * 0.06))
-                            .foregroundColor(.white)
-                            .padding(.top, geometry.size.height * 0.009)
-                        
-                        Spacer()
-                        Spacer()
-                        Spacer()
-                    }
-                    VStack {
-                        Spacer()
-                        
-                        if isLoading {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                .scaleEffect(2)
-                                .padding([.bottom], 70)
-                        } else if isDownloading {
+                        // Logic for displaying different UI elements
+                        if isDownloading {
                             ProgressView("Downloading...", value: downloadProgress, total: 1.0)
                                 .padding()
                                 .progressViewStyle(WhiteLinearProgressViewStyle())
@@ -68,10 +68,12 @@ struct LaunchScreen: View {
                         }
                     }
                 }
-                .ignoresSafeArea()
-                .dynamicTypeSize(.xSmall ... .accessibility4)
                 .onAppear {
-                    checkInternetConnection()
+                    if shouldCheckForAssets {
+                        checkInternetConnection()
+                    } else {
+                        showLaunchButton = true
+                    }
                     isFirstLaunch = viewModel.isFirstLaunch
                     viewModel.isFirstLaunch = false
                 }
@@ -80,6 +82,16 @@ struct LaunchScreen: View {
         .interfaceOrientations(.portrait)
         .toolbar(.hidden, for: .navigationBar)
         .navigationViewStyle(.stack)
+        .navigationBarHidden(true)
+    }
+    
+    private func updateGradientColors(rotationX: CGFloat, rotationY: CGFloat) {
+        let redStart = abs(sin(Double(rotationX))) * 0.5 + 0.5
+        let redEnd = abs(cos(Double(rotationY))) * 0.3 + 0.3
+        let blackTone = abs(sin(Double(rotationX * rotationY))) * 0.5
+        
+        startColor = Color(red: redStart, green: 0, blue: 0)
+        endColor = Color(red: redEnd, green: 0, blue: 0).opacity(1 - blackTone)
     }
     
     private var downloadPromptView: some View {
@@ -96,8 +108,11 @@ struct LaunchScreen: View {
             
             HStack {
                 Spacer()
-                Button(action: convertLocalImages) {
-                    Text("No ")
+                Button(action: {
+                    showLaunchButton = true
+                    showDownloadPrompt = false
+                }) {
+                    Text("No")
                         .padding([.top, .bottom], 14)
                         .padding([.trailing, .leading], 34)
                         .font(.custom("CaslonDoric-Medium", size: 13))
@@ -128,11 +143,12 @@ struct LaunchScreen: View {
     private var launchButton: some View {
         NavigationLink(destination: isFirstLaunch ? AnyView(TutorialView(viewModel: TutorialCardsViewModel())) : AnyView(ARCameraView().environmentObject(coordinator))) {
             Text("Launch")
-                .padding()
-                .font(.custom("CaslonDoric-Medium", size: 16))
+                .font(.custom("CaslonDoric-Medium", size: 20))
+                .padding(.horizontal, 28)
+                .padding(.vertical, 14)
                 .foregroundColor(.white)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 28)
                         .stroke(.white, lineWidth: 2)
                 )
         }
@@ -140,54 +156,65 @@ struct LaunchScreen: View {
     }
     
     private func checkInternetConnection() {
-        Task {
-            isLoading = true
-            do {
-                try reachability.startNotifier()
-                isOffline = reachability.connection == .unavailable
-                if isOffline {
-                    convertLocalImages()
-                } else {
-                    hasNewAssets = try await FirebaseStorageService.shared.hasNewAssets()
-                    DispatchQueue.main.async {
-                        isLoading = false
-                        if hasNewAssets {
-                            showDownloadPrompt = true
-                        } else {
-                            convertLocalImages()
+        if shouldCheckForAssets {
+            ConnectivityManager.isInternetAccessible { isConnected in
+                DispatchQueue.main.async {
+                    if isConnected {
+                        Task {
+                            do {
+                                hasNewAssets = try await FirebaseStorageService.shared.hasNewAssets()
+                                if hasNewAssets {
+                                    showDownloadPrompt = true
+                                } else {
+                                    showLaunchButton = true
+                                }
+                            } catch {
+                                showLaunchButton = true
+                            }
                         }
+                    } else {
+                        showLaunchButton = true
                     }
                 }
-            } catch {
-                isOffline = true
-                convertLocalImages()
             }
         }
     }
     
     private func startDownload() {
-        isDownloading = true
-        Task {
-            do {
-                await FirebaseStorageService.shared.downloadFiles(progress: { progress in
+        if shouldCheckForAssets {  // Only run this if asset checking is enabled
+            isDownloading = true
+            showDownloadPrompt = false
+            
+            Task {
+                do {
+                    await FirebaseStorageService.shared.downloadFiles(progress: { progress in
+                        DispatchQueue.main.async {
+                            downloadProgress = progress
+                        }
+                    })
                     DispatchQueue.main.async {
-                        downloadProgress = progress
+                        convertLocalImages()
+                        showLaunchButton = true
+                        isDownloading = false
                     }
-                })
-                DispatchQueue.main.async {
-                    convertLocalImages()
+                } catch {
+                    DispatchQueue.main.async {
+                        // Handle error
+                        showLaunchButton = true
+                        isDownloading = false
+                    }
                 }
-            }        }
+            }
+        }
     }
     
     private func convertLocalImages() {
-        Task {
-            FirebaseStorageService.shared.createARReferenceImages()
-            DispatchQueue.main.async {
-                isLoading = false
-                isDownloading = false
-                showDownloadPrompt = false
-                showLaunchButton = true
+        if shouldCheckForAssets {  // Only run this if asset checking is enabled
+            Task {
+                FirebaseStorageService.shared.createARReferenceImages()
+                DispatchQueue.main.async {
+                    showLaunchButton = true
+                }
             }
         }
     }
