@@ -23,7 +23,7 @@ struct LaunchScreen: View {
     private let reachability = try! Reachability()
     
     // Add a boolean to control whether to check for assets
-    @State private var shouldCheckForAssets: Bool = true
+    @State private var shouldCheckForAssets: Bool = false
     
     @State private var scene: SCNScene? = {
         guard let url = Bundle.main.url(forResource: "HDLogo_ARM", withExtension: "usdz", subdirectory: "3DModels.scnassets"),
@@ -140,20 +140,30 @@ struct LaunchScreen: View {
         .padding(.bottom, 56)
     }
     
+    private func disposeSCNView() {
+        scene = nil // This will release the SCNScene and any associated resources
+    }
+    
     private var launchButton: some View {
-        NavigationLink(destination: isFirstLaunch ? AnyView(TutorialView(viewModel: TutorialCardsViewModel())) : AnyView(ARCameraView().environmentObject(coordinator))) {
-            Text("Launch")
-                .font(.custom("CaslonDoric-Medium", size: 20))
-                .padding(.horizontal, 28)
-                .padding(.vertical, 14)
-                .foregroundColor(.white)
-                .background(
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(.white, lineWidth: 2)
-                )
+        Button(action: {
+            disposeSCNView() // Dispose of the SCNView and associated resources
+        }) {
+            NavigationLink(destination: isFirstLaunch ? AnyView(TutorialView(viewModel: TutorialCardsViewModel())) : AnyView(ARCameraView().environmentObject(coordinator))) {
+                Text("Launch")
+                    .font(.custom("CaslonDoric-Medium", size: 20))
+                    .padding(.horizontal, 28)
+                    .padding(.vertical, 14)
+                    .foregroundColor(.white)
+                    .background(
+                        RoundedRectangle(cornerRadius: 28)
+                            .stroke(.white, lineWidth: 2)
+                    )
+            }
         }
         .padding(.bottom, 56)
     }
+    
+
     
     private func checkInternetConnection() {
         if shouldCheckForAssets {

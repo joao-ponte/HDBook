@@ -27,6 +27,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     @Published var filmURL: URL?
     @Published var superZoomURL: URL?
     @Published var showAlert = false
+    @Published var show360ViewAlert = false
     
     private var firebaseStorageService: FirebaseStorageService
     
@@ -218,6 +219,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             if let arView = arView, let panoramaView = imageManager.createPanoramaView(for: image360URL, frame: arView.bounds) {
                 placeImage360Screen(panoramaView: panoramaView, imageAnchor: imageAnchor)
                 is360ViewActive = true
+                show360ViewAlert = true
                 pauseARSession()
                 print("Presenting 360 view for image: \(referenceImageName)")
             } else {
@@ -226,6 +228,10 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         } else {
             print("360 image file does not exist at path: \(image360URL.path)")
         }
+    }
+    
+    func dismiss360ViewAlert() {
+        show360ViewAlert = false
     }
     
     private func handle3DModelAsset(for referenceImageName: String, imageAnchor: ARImageAnchor) {

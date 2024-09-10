@@ -12,21 +12,61 @@ import InterfaceOrientation
 
 struct ARCameraView: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
-    let linkToPhotos = URL(string: "https://www.hayesdavidson.com/portfolio/360s")!
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             ARViewContainer()
                 .edgesIgnoringSafeArea(.all)
-            
+
             TopBar()
-            
+
+            // Custom alert overlay
             if coordinator.showAlert {
                 NoInternetAlertView {
                     coordinator.dismissAlertAndResetARSession()
                 }
                 .transition(.opacity)
                 .zIndex(1)
+            }
+
+            // Custom tap-to-dismiss overlay
+            if coordinator.show360ViewAlert {
+                GeometryReader { geometry in
+                    Color.black.opacity(0.6)
+                        .edgesIgnoringSafeArea(.all)
+                        .onTapGesture {
+                            coordinator.dismiss360ViewAlert()
+                        }
+                        .overlay(
+                            VStack(/*spacing: geometry.size.height * 0.02*/) { // Adjusts spacing based on screen height
+                                Text("You have entered a 360-degree view. Use motion to explore.")
+                                    .font(.custom(Fonts.CaslonDoric.regular, size: geometry.size.width * 0.06)) // Relative font size
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+
+                                VStack(/*spacing: geometry.size.height * 0.01*/) {
+                                    Image("orbitIcon")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: geometry.size.width * 0.4, height: geometry.size.width * 0.4) // Relative image size
+
+                                    Text("Move your device to experience the 360.")
+                                        .font(.custom(Fonts.CaslonDoric.regular, size: geometry.size.width * 0.06)) // Relative font size
+                                        .foregroundColor(.white)
+                                        .multilineTextAlignment(.center)
+                                }
+                                .padding()
+                                .cornerRadius(10)
+                            }
+                            .padding()
+                            .background(AppColors.Active.grey.opacity(0.6))
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                        )
+                        .zIndex(2)
+                        .transition(.opacity)
+                }
             }
         }
         .interfaceOrientations(.portrait)
@@ -57,8 +97,10 @@ struct ARCameraView: View {
     }
 }
 
+
 struct TopBar: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
+    
     var body: some View {
         HStack {
             if coordinator.is360ViewActive {
