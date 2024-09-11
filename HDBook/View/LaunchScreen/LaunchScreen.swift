@@ -33,8 +33,12 @@ struct LaunchScreen: View {
         return scene
     }()
     
-    @State private var startColor: Color = Color(red: 0.9, green: 0.1, blue: 0.1)
-    @State private var endColor: Color = Color(red: 0.3, green: 0, blue: 0)
+    @State private var backgroundColor: Color = AppColors.Backgrounds.launchScreen
+        @State private var shadowColor: Color = Color.black.opacity(0.8)
+        
+        @State private var gradientStartPoint: UnitPoint = .topLeading
+        @State private var gradientEndPoint: UnitPoint = .bottomTrailing
+        @State private var hueRotationAngle: Double = 0
     
     init(viewModel: TutorialCardsViewModel) {
         self.viewModel = viewModel
@@ -44,19 +48,24 @@ struct LaunchScreen: View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
-                    LinearGradient(gradient: Gradient(colors: [startColor, endColor]),
-                                   startPoint: .topLeading,
-                                   endPoint: .bottomTrailing)
-                    .ignoresSafeArea()
-                    .animation(.easeInOut(duration: 1.0))
+                    backgroundColor
+                        .ignoresSafeArea()
+                    
+                    LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0), shadowColor, Color.black.opacity(0)]),
+                                                       startPoint: gradientStartPoint,
+                                                       endPoint: gradientEndPoint)
+                                            .hueRotation(.degrees(hueRotationAngle))
+                                            .blendMode(.multiply)
+                                            .ignoresSafeArea()
+
                     
                     VStack(spacing: 0) {
                         // 3D Model View
-                        CustomModelView(scene: $scene, onRotate: updateGradientColors)
+                        CustomModelView(scene: $scene, onRotate: updateShadow)
                             .frame(width: geometry.size.width, height: geometry.size.height * 0.5)
                             .cornerRadius(20)
                         
-                        // Logic for displaying different UI elements
+                        
                         if isDownloading {
                             ProgressView("Downloading...", value: downloadProgress, total: 1.0)
                                 .padding()
@@ -85,13 +94,22 @@ struct LaunchScreen: View {
         .navigationBarHidden(true)
     }
     
-    private func updateGradientColors(rotationX: CGFloat, rotationY: CGFloat) {
-        let redStart = abs(sin(Double(rotationX))) * 0.5 + 0.5
-        let redEnd = abs(cos(Double(rotationY))) * 0.3 + 0.3
-        let blackTone = abs(sin(Double(rotationX * rotationY))) * 0.5
-        
-        startColor = Color(red: redStart, green: 0, blue: 0)
-        endColor = Color(red: redEnd, green: 0, blue: 0).opacity(1 - blackTone)
+    private func updateShadow(rotationX: CGFloat, rotationY: CGFloat) {
+        // Calculate the coverage factor
+        let minCoverage: CGFloat = 0.1 // 10% coverage
+        let maxCoverage: CGFloat = 0.9 // 90% coverage
+        let coverageFactorX = minCoverage + (maxCoverage - minCoverage) * abs(rotationX / .pi)
+        let coverageFactorY = minCoverage + (maxCoverage - minCoverage) * abs(rotationY / .pi)
+
+        // Adjust the start and end points based on rotation
+        gradientStartPoint = UnitPoint(x: 0.5 - coverageFactorX, y: 0.5 - coverageFactorY)
+        gradientEndPoint = UnitPoint(x: 0.5 + coverageFactorX, y: 0.5 + coverageFactorY)
+
+        // Ensure shadowColor remains constant as Color.black.opacity(0.8)
+        shadowColor = Color.black.opacity(0.8)
+
+        // Optionally calculate a hue rotation to add more dynamic effects
+        hueRotationAngle = Double(rotationX + rotationY) * 20
     }
     
     private var downloadPromptView: some View {
@@ -163,7 +181,7 @@ struct LaunchScreen: View {
         .padding(.bottom, 56)
     }
     
-
+    
     
     private func checkInternetConnection() {
         if shouldCheckForAssets {

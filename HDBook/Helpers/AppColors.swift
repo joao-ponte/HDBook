@@ -23,4 +23,8 @@ struct AppColors {
         static let yellow = Color("ActiveYellowHD")
         static let grey = Color("ActiveGreyHD")
     }
+    
+    struct Backgrounds {
+        static let launchScreen = Color("LaunchScreen")
+    }
 }
