@@ -363,17 +363,22 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         let imageAnchorEntity = AnchorEntity(anchor: imageAnchor)
         
         if imageAnchor.referenceImage.name == "HDLogo_ARM" {
-            // image anchor right/high/left
+            // Specific configuration for HDLogo_ARM
             modelEntity.setPosition(SIMD3<Float>(0.01, 0.05, 0), relativeTo: imageAnchorEntity)
-            
             modelEntity.scale = [0.0075, 0.0075, 0.0075]
             
             let rotation = simd_quatf(angle: GLKMathDegreesToRadians(180), axis: SIMD3<Float>(1, 0, 0))
             modelEntity.setOrientation(rotation, relativeTo: imageAnchorEntity)
             
             print("HDLogo_ARM specific configuration applied.")
+            
+            // Add the shadow-casting light to the scene
+            let shadowCastingLight = createShadowCastingLight()
+            imageAnchorEntity.addChild(shadowCastingLight)
+            
+            addShadowReceivingPlane(to: arView)
         } else {
-            // others 3D models
+            // Default configuration for other 3D models
             modelEntity.setPosition(SIMD3<Float>(0, 0, 0), relativeTo: imageAnchorEntity)
             modelEntity.scale = [0.15, 0.15, 0.15]
             
@@ -389,6 +394,42 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         print("Model entity's final position: \(modelEntity.position)")
     }
     
+    private func createShadowCastingLight() -> Entity {
+        let lightShineTarget = SIMD3<Float>(0, 0, 0)
+        let lightPosition = SIMD3<Float>(3, 3, 1.5)
+        
+        // Create a directional light component
+        var directionalLight = DirectionalLightComponent()
+        directionalLight.intensity = 30000 // Adjust the intensity for shadow strength
+//        directionalLight.color = .purple
+        
+        // Create an entity and attach the light component
+        let lightEntity = Entity()
+        lightEntity.position = lightPosition
+        lightEntity.components[DirectionalLightComponent.self] = directionalLight
+        
+        // Rotate the light to shine toward the target
+        lightEntity.look(at: lightShineTarget, from: lightPosition, relativeTo: nil)
+        
+        return lightEntity
+    }
+    
+    private func addShadowReceivingPlane(to arView: ARView) {
+        // Create a plane entity to receive shadows
+        let planeSize: Float = 1  // Adjust size as needed
+        let mesh = MeshResource.generatePlane(width: planeSize, depth: planeSize)
+        let material = OcclusionMaterial(receivesDynamicLighting: true)  // Plane receives shadows
+        let shadowPlane = ModelEntity(mesh: mesh, materials: [material])
+
+        // Position the plane at the origin, where you expect shadows to fall
+        shadowPlane.position = [0, 0, 0]  // Place directly at the ground level
+
+        // Create an anchor and add the plane to the scene
+        let shadowPlaneAnchor = AnchorEntity(world: [0, 0, 0])
+        shadowPlaneAnchor.addChild(shadowPlane)
+        arView.scene.addAnchor(shadowPlaneAnchor)
+    }
+
     private func presentWebViewConfirmation(url: URL) {
         let alert = UIAlertController(title: "Open Webpage", message: "Do you want to open this webpage?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))

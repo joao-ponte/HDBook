@@ -12,14 +12,14 @@ import InterfaceOrientation
 
 struct ARCameraView: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
-
+    
     var body: some View {
         ZStack(alignment: .top) {
             ARViewContainer()
                 .edgesIgnoringSafeArea(.all)
-
+            
             TopBar()
-
+            
             // Custom alert overlay
             if coordinator.showAlert {
                 NoInternetAlertView {
@@ -28,44 +28,43 @@ struct ARCameraView: View {
                 .transition(.opacity)
                 .zIndex(1)
             }
-
+            
             // Custom tap-to-dismiss overlay
             if coordinator.show360ViewAlert {
                 GeometryReader { geometry in
-                    Color.black.opacity(0.6)
+                    Color.black.opacity(0.45)
                         .edgesIgnoringSafeArea(.all)
+                        .overlay(
+                            VStack {
+                                Text("360-degree view enabled")
+                                    .font(.custom("CaslonDoric-Medium", size: geometry.size.width * 0.12)
+                                        .weight(.medium))
+                                    .foregroundColor(.white)
+                                    .lineSpacing(8)
+                                    .padding(.horizontal)
+                                    .padding(.bottom, geometry.size.height * (49.5 / 812))
+                                
+                                VStack {
+                                    Image("Alert360View")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: geometry.size.width * (280 / 375), height: geometry.size.height * (280 / 812))
+                                    
+                                    Text("Move your device to experience the 360.")
+                                        .font(.custom("CaslonDoric-Medium", size: geometry.size.width * 0.05)
+                                            .weight(.medium))
+                                        .foregroundColor(.white)
+                                        .lineSpacing(8)
+                                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                                        .padding(.horizontal, geometry.size.width * (50 / 375))
+                                        .padding(.top, geometry.size.height * (49.5 / 812))
+                                }
+                            }
+                        )
+                        .zIndex(2)
                         .onTapGesture {
                             coordinator.dismiss360ViewAlert()
                         }
-                        .overlay(
-                            VStack(/*spacing: geometry.size.height * 0.02*/) { // Adjusts spacing based on screen height
-                                Text("You have entered a 360-degree view. Use motion to explore.")
-                                    .font(.custom(Fonts.CaslonDoric.regular, size: geometry.size.width * 0.06)) // Relative font size
-                                    .foregroundColor(.white)
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal)
-
-                                VStack(/*spacing: geometry.size.height * 0.01*/) {
-                                    Image("orbitIcon")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: geometry.size.width * 0.4, height: geometry.size.width * 0.4) // Relative image size
-
-                                    Text("Move your device to experience the 360.")
-                                        .font(.custom(Fonts.CaslonDoric.regular, size: geometry.size.width * 0.06)) // Relative font size
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
-                                }
-                                .padding()
-                                .cornerRadius(10)
-                            }
-                            .padding()
-                            .background(AppColors.Active.grey.opacity(0.6))
-                            .cornerRadius(10)
-                            .shadow(radius: 5)
-                        )
-                        .zIndex(2)
-                        .transition(.opacity)
                 }
             }
         }
