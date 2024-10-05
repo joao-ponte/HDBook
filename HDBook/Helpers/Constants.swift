@@ -37,15 +37,27 @@ struct Constants {
     
     
     enum WebAssets: String {
-        case langtownhouse = "Langtownhouse_WEB-18"
-        case hdStories = "HDStories_WEB-18"
+        case southDowntow = "Story_p41_Liveable South Downtown_WEB-18"
+        case memorialLearningCentre = "Story_p317_Holocaust Memorial & Learning Centre_WEB-18"
+        case tintagelCastleFootbridge = "Story_p549_Tintagel Castle Footbridge_WEB-18"
+        case oneAndOnlyKeaIsland = "Story_p581_One&Only Kéa Island_WEB-18"
+        case kaoLaAmani = "Story_p609_Kao La Amani_WEB-18"
+        case thirdSpace = "Story_p617_Third Space_WEB-18"
         
         var url: URL? {
             switch self {
-            case .langtownhouse:
-                return URL(string: "https://app.envisionvr.net/?intent=view/HY01")
-            case .hdStories:
+            case .southDowntow:
+                return URL(string: "https://www.hayesdavidson.com/stories/an-early-stage-illustrative-concept-to-support-a-revitalised-seattle")
+            case .memorialLearningCentre:
                 return URL(string: "https://www.hayesdavidson.com/stories/planning-images-for-a-sensitive-project-in-a-heritage-setting")
+            case .tintagelCastleFootbridge:
+                return URL(string: "https://www.hayesdavidson.com/stories/bespoke-lighting-to-stand-out-from-the-competition")
+            case .oneAndOnlyKeaIsland:
+                return URL(string: "https://www.hayesdavidson.com/stories/from-planning-to-marketing-images-for-an-idyllic-island-getaway")
+            case .kaoLaAmani:
+                return URL(string: "https://www.hayesdavidson.com/stories/a-storybook-aesthetic-to-engage-children-in-their-school-design")
+            case .thirdSpace:
+                return URL(string: "https://www.hayesdavidson.com/stories/a-creative-partnership-unlocks-innovation-for-the-cultural-sector")
             }
         }
     }

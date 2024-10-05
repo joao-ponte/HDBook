@@ -33,12 +33,9 @@ struct LaunchScreen: View {
         return scene
     }()
     
-    @State private var backgroundColor: Color = AppColors.Backgrounds.launchScreen
-        @State private var shadowColor: Color = Color.black.opacity(0.8)
-        
-        @State private var gradientStartPoint: UnitPoint = .topLeading
-        @State private var gradientEndPoint: UnitPoint = .bottomTrailing
-        @State private var hueRotationAngle: Double = 0
+    @State private var backgroundColor: Color = Color(red: 1.0, green: 0.52, blue: 0.49) // #FF857C
+       @State private var noiseImage: UIImage? = nil
+       @State private var hueRotationAngle: Double = 0
     
     init(viewModel: TutorialCardsViewModel) {
         self.viewModel = viewModel
@@ -49,19 +46,21 @@ struct LaunchScreen: View {
             GeometryReader { geometry in
                 ZStack {
                     backgroundColor
-                        .ignoresSafeArea()
-                    
-                    LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0), shadowColor, Color.black.opacity(0)]),
-                                                       startPoint: gradientStartPoint,
-                                                       endPoint: gradientEndPoint)
-                                            .hueRotation(.degrees(hueRotationAngle))
-                                            .blendMode(.multiply)
-                                            .ignoresSafeArea()
-
+                    if let noiseImage = noiseImage {
+                                            Image(uiImage: noiseImage)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .ignoresSafeArea()
+                                                .hueRotation(.degrees(hueRotationAngle))
+                                                .blendMode(.multiply)
+                                        } else {
+                                            backgroundColor
+                                                .ignoresSafeArea()
+                                        }
                     
                     VStack(spacing: 0) {
                         // 3D Model View
-                        CustomModelView(scene: $scene, onRotate: updateShadow)
+                        CustomModelView(scene: $scene, onRotate: updateNoiseAndShadow)
                             .frame(width: geometry.size.width, height: geometry.size.height * 0.5)
                             .cornerRadius(20)
                         
@@ -78,6 +77,7 @@ struct LaunchScreen: View {
                     }
                 }
                 .onAppear {
+                    generateNoiseImage()
                     if shouldCheckForAssets {
                         checkInternetConnection()
                     } else {
@@ -94,22 +94,22 @@ struct LaunchScreen: View {
         .navigationBarHidden(true)
     }
     
-    private func updateShadow(rotationX: CGFloat, rotationY: CGFloat) {
-        // Calculate the coverage factor
-        let minCoverage: CGFloat = 0.1 // 10% coverage
-        let maxCoverage: CGFloat = 0.9 // 90% coverage
-        let coverageFactorX = minCoverage + (maxCoverage - minCoverage) * abs(rotationX / .pi)
-        let coverageFactorY = minCoverage + (maxCoverage - minCoverage) * abs(rotationY / .pi)
+    private func generateNoiseImage() {
+        let filter = CIFilter(name: "CIRandomGenerator")! // Correctly create CIRandomGenerator filter
+        let context = CIContext(options: nil)
 
-        // Adjust the start and end points based on rotation
-        gradientStartPoint = UnitPoint(x: 0.5 - coverageFactorX, y: 0.5 - coverageFactorY)
-        gradientEndPoint = UnitPoint(x: 0.5 + coverageFactorX, y: 0.5 + coverageFactorY)
-
-        // Ensure shadowColor remains constant as Color.black.opacity(0.8)
-        shadowColor = Color.black.opacity(0.8)
-
-        // Optionally calculate a hue rotation to add more dynamic effects
+        if let ciImage = filter.outputImage?.cropped(to: CGRect(x: 0, y: 0, width: 1024, height: 1024)),
+           let cgImage = context.createCGImage(ciImage, from: ciImage.extent) {
+            noiseImage = UIImage(cgImage: cgImage)
+        }
+    }
+    
+    private func updateNoiseAndShadow(rotationX: CGFloat, rotationY: CGFloat) {
+        // Adjust hue rotation based on the rotation of the 3D model
         hueRotationAngle = Double(rotationX + rotationY) * 20
+        
+        // Optionally regenerate noise with new characteristics based on rotation (if desired)
+        // For simplicity, we're just adjusting the hue rotation here
     }
     
     private var downloadPromptView: some View {
