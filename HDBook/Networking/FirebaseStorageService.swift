@@ -77,6 +77,10 @@ class FirebaseStorageService {
         return Bundle.main.url(forResource: referenceImageName, withExtension: Constants.image360Extension, subdirectory: "/360View.scnassets")
     }
     
+    func getLocalVideo360URL(for referenceImageName: String) -> URL? {
+        return Bundle.main.url(forResource: referenceImageName, withExtension: Constants.videoExtension, subdirectory: "/360View.scnassets")
+    }
+    
     func getLocalModelURL(for referenceImageName: String) -> URL? {
         return Bundle.main.url(forResource: referenceImageName, withExtension: Constants.modelExtension, subdirectory: "/3DModels.scnassets")
     }

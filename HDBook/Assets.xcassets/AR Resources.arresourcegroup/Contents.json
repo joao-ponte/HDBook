@@ -6,6 +6,9 @@
   "resources" : [
     {
       "filename" : "HDLogo_ARM.arreferenceimage"
+    },
+    {
+      "filename" : "KP600_360-19.arreferenceimage"
     }
   ]
 }

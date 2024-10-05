@@ -8,6 +8,8 @@
 import SwiftUI
 import RealityKit
 import ARKit
+import CoreMotion
+import AVFoundation
 
 class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessionManagement, ARImageHandling, ARVideoHandling {
     
@@ -20,6 +22,9 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     private var videoManager: VideoManager
     private var imageManager: ImageManager
     private var modelManager: ModelManagement
+    var videoEntity: ModelEntity?
+    private let motionManager = CMMotionManager()
+    private var cameraAnchor: AnchorEntity?
     
     @Published var is360ViewActive = false
     @Published var isSuperZoomPresented: Bool = false
@@ -107,7 +112,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         case .video:
             handleVideoAsset(for: referenceImageName, imageAnchor: imageAnchor, uuid: uuid)
         case .image360:
-            handle360ImageAsset(for: referenceImageName, imageAnchor: imageAnchor)
+            handle360Asset(for: referenceImageName, imageAnchor: imageAnchor)
         case .model:
             handle3DModelAsset(for: referenceImageName, imageAnchor: imageAnchor)
         case .superZoom:
@@ -166,6 +171,15 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         )
     }
     
+    private func getVideo360URL(for referenceImageName: String) -> URL? {
+        return getAssetURL(
+            for: referenceImageName,
+            localURLProvider: firebaseStorageService.getLocalVideo360URL,
+            directory: firebaseStorageService.images360Directory,
+            fileExtension: Constants.videoExtension
+        )
+    }
+    
     private func get3DModelsURL(for referenceImageName: String) -> URL? {
         return getAssetURL(
             for: referenceImageName,
@@ -209,25 +223,78 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         }
     }
     
-    private func handle360ImageAsset(for referenceImageName: String, imageAnchor: ARImageAnchor) {
-        guard let image360URL = getImage360URL(for: referenceImageName) else {
-            print("No valid 360 image asset found for tracked image: \(referenceImageName)")
-            return
-        }
-        
-        if FileManager.default.fileExists(atPath: image360URL.path) {
+    private func handle360Asset(for referenceImageName: String, imageAnchor: ARImageAnchor) {
+        // Check for 360 image first
+        if let image360URL = getImage360URL(for: referenceImageName),
+           FileManager.default.fileExists(atPath: image360URL.path) {
+            // If a valid 360 image asset is found, present it
             if let arView = arView, let panoramaView = imageManager.createPanoramaView(for: image360URL, frame: arView.bounds) {
                 placeImage360Screen(panoramaView: panoramaView, imageAnchor: imageAnchor)
                 is360ViewActive = true
                 show360ViewAlert = true
                 pauseARSession()
-                print("Presenting 360 view for image: \(referenceImageName)")
+                print("Presenting 360 image view for image: \(referenceImageName)")
             } else {
-                print("Error: ARView is nil or failed to load image.")
+                print("Error: ARView is nil or failed to load 360 image.")
             }
-        } else {
-            print("360 image file does not exist at path: \(image360URL.path)")
         }
+        // If no 360 image is found, check for 360 video
+        else if let video360URL = getVideo360URL(for: referenceImageName),
+                FileManager.default.fileExists(atPath: video360URL.path) {
+            // If a valid 360 video asset is found, present it
+            print("Video URL: \(video360URL)")
+            display360Video(video360URL: video360URL)
+            is360ViewActive = true
+            show360ViewAlert = true
+            print("Presenting 360 video view for image: \(referenceImageName)")
+        }
+        // No 360 image or video found for the tracked image
+        else {
+            print("No valid 360 media (image or video) asset found for tracked image: \(referenceImageName)")
+        }
+    }
+    
+    private func display360Video(video360URL: URL) {
+        guard let arView = arView else { return }
+        
+        // Create an AVPlayer with the video URL
+        let videoPlayer = AVPlayer(url: video360URL)
+        print("AVPlayer initialized with URL: \(video360URL)")
+        
+        // Create a VideoMaterial with the AVPlayer
+        let videoMaterial = VideoMaterial(avPlayer: videoPlayer)
+        
+        // Create a sphere ModelEntity to display the 360 video
+        let sphere = MeshResource.generateSphere(radius: 10)
+        let videoEntity = ModelEntity(mesh: sphere, materials: [videoMaterial])
+        
+        // In RealityKit, the video will be rendered on the inside of the sphere, so invert it
+        videoEntity.scale = [1, 1, -1] // Invert the sphere to show the video on the inside
+        
+        // Add the video entity to the scene
+        let anchorEntity = AnchorEntity()
+        anchorEntity.addChild(videoEntity)
+        arView.scene.addAnchor(anchorEntity)
+        
+        self.videoEntity = videoEntity
+        
+        // Create and add the camera anchor
+        let cameraAnchor = AnchorEntity(world: [0, 0, 0]) // Ensure camera starts inside the sphere
+        arView.scene.addAnchor(cameraAnchor)
+        self.cameraAnchor = cameraAnchor
+        
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: videoPlayer.currentItem, queue: .main) { [weak videoPlayer] _ in
+            videoPlayer?.seek(to: .zero)
+            videoPlayer?.play()
+        }
+        
+        // Delay the start of the video to ensure RealityKit is ready
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            videoPlayer.play()
+        }
+        
+        // Start device motion updates
+        startDeviceMotionUpdates()
     }
     
     func dismiss360ViewAlert() {
@@ -255,6 +322,30 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             }
         } else {
             print("3D model file does not exist at path: \(modelsURL.path)")
+        }
+    }
+    
+    private func startDeviceMotionUpdates() {
+        guard motionManager.isDeviceMotionAvailable else {
+            print("Device motion is not available.")
+            return
+        }
+        
+        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0 // 60 FPS
+        
+        motionManager.startDeviceMotionUpdates(to: OperationQueue.main) { [weak self] motion, error in
+            guard let self = self, let motion = motion else {
+                print("Failed to get device motion updates: \(String(describing: error))")
+                return
+            }
+            
+            let attitude = motion.attitude
+            let rotation = simd_quatf(angle: Float(attitude.yaw), axis: [0, 1, 0]) *
+            simd_quatf(angle: Float(attitude.pitch), axis: [1, 0, 0]) *
+            simd_quatf(angle: Float(attitude.roll), axis: [0, 0, 1])
+            
+            // Update the camera anchor's orientation with the device's motion
+            self.cameraAnchor?.orientation = Transform(rotation: rotation).rotation
         }
     }
     
