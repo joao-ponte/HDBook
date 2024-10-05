@@ -22,6 +22,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     private var videoManager: VideoManager
     private var imageManager: ImageManager
     private var modelManager: ModelManagement
+    var currentVideoURL: URL?
     var videoEntity: ModelEntity?
     private let motionManager = CMMotionManager()
     private var cameraAnchor: AnchorEntity?
@@ -244,6 +245,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             // If a valid 360 video asset is found, present it
             print("Video URL: \(video360URL)")
             display360Video(video360URL: video360URL)
+            currentVideoURL = video360URL
             is360ViewActive = true
             show360ViewAlert = true
             print("Presenting 360 video view for image: \(referenceImageName)")
@@ -586,11 +588,36 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     
     func exit360View() {
         is360ViewActive = false
-        removePanoramaView()
+        show360ViewAlert = false
+        removePanoramaView() // Remove the panorama view
+        
+        activeAnchor?.removeFromParent()
+        activeAnchor = nil
         Task {
             await resumeARSession()
         }
-        print("Exited 360 view.")
+    }
+    
+    func exitVideo360View() {
+        is360ViewActive = false
+        show360ViewAlert = false
+        
+        // Remove the video entity and camera anchor
+        videoEntity?.removeFromParent()
+        cameraAnchor?.removeFromParent()
+        videoEntity = nil
+        cameraAnchor = nil
+        
+        // Clear the active anchor to allow new tracking
+        activeAnchor?.removeFromParent()
+        activeAnchor = nil
+        
+        // Stop device motion updates
+        motionManager.stopDeviceMotionUpdates()
+        
+        Task {
+            await resumeARSession() // Resume AR session to track new assets
+        }
     }
     
     private func removePanoramaView() {

@@ -96,7 +96,6 @@ struct ARCameraView: View {
     }
 }
 
-
 struct TopBar: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
     
@@ -104,10 +103,14 @@ struct TopBar: View {
         HStack {
             if coordinator.is360ViewActive {
                 Button(action: {
-                    coordinator.exit360View()
+                    if coordinator.videoEntity != nil {
+                        coordinator.exitVideo360View()
+                    } else {
+                        coordinator.exit360View()
+                    }
                 }) {
                     Image(systemName: "arrow.backward.circle")
-                        .foregroundColor(.green)
+                        .foregroundColor(AppColors.Active.green)
                         .font(.system(size: 28))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
