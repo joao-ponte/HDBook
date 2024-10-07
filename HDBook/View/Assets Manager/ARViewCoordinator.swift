@@ -34,6 +34,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     @Published var superZoomURL: URL?
     @Published var showAlert = false
     @Published var show360ViewAlert = false
+    @Published var isTrackingAsset: Bool = false
     
     private var firebaseStorageService: FirebaseStorageService
     
@@ -77,6 +78,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             await arView?.scene.removeAnchor(anchor)
         }
         activeAnchor = nil
+        activeAnchors.removeAll()
+        isTrackingAsset = false // Reset when all anchors are removed
     }
     
     private func createARConfiguration() throws -> ARImageTrackingConfiguration {
@@ -429,6 +432,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         arView.scene.addAnchor(imageAnchorEntity)
         activeAnchors[uuid] = imageAnchorEntity
         
+        isTrackingAsset = true
+        
         startTrackingTimer(for: uuid)
         print("Video screen placed for UUID: \(uuid)")
     }
@@ -447,6 +452,11 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         activeAnchors.removeValue(forKey: uuid)
         videoManager.videoPlayers.removeValue(forKey: uuid)
         trackingTimers.removeValue(forKey: uuid)
+        
+        if activeAnchors.isEmpty {
+                isTrackingAsset = false
+        }
+        
         print("Tracking timeout handled for UUID: \(uuid)")
     }
     
@@ -481,6 +491,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         imageAnchorEntity.addChild(modelEntity)
         arView.scene.addAnchor(imageAnchorEntity)
         activeAnchors[uuid] = imageAnchorEntity
+        
+        isTrackingAsset = true
         
         startTrackingTimer(for: uuid)
         print("3D model placed for UUID: \(uuid)")

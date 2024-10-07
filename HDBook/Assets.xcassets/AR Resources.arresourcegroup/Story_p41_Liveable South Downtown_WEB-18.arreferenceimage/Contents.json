@@ -1,0 +1,16 @@
+{
+  "images" : [
+    {
+      "filename" : "Story_p41_Liveable South Downtown_WEB-18.jpg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "unit" : "centimeters",
+    "width" : 18
+  }
+}

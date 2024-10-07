@@ -67,6 +67,18 @@ struct ARCameraView: View {
                         }
                 }
             }
+            
+            if coordinator.activeAnchors.isEmpty && !coordinator.is360ViewActive && !coordinator.isTrackingAsset {
+                GeometryReader { geometry in
+                    Image("rectangleFrame")
+                        .resizable()
+                        .scaledToFit()
+                        .zIndex(3)
+                        .padding(.horizontal, geometry.size.width * (28 / 375)) // Proportional horizontal padding
+                        .padding(.vertical, geometry.size.height * (246 / 812)) // Proportional vertical padding
+                }
+            }
+            
         }
         .interfaceOrientations(.portrait)
         .onAppear {
