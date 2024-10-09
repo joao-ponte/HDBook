@@ -19,6 +19,7 @@ struct LaunchScreen: View {
     @State private var downloadProgress: Float = 0.0
     @State private var isOffline = false
     @State private var showLaunchButton = false
+    @State private var showNextView = false
     @EnvironmentObject var coordinator: ARViewCoordinator
     private let reachability = try! Reachability()
     
@@ -54,21 +55,24 @@ struct LaunchScreen: View {
                         // 25% of the screen height based on geometry
                         let topPadding = geometry.size.height * 0.25
 
-                        // 3D Model View
+                        // 3D Model View - Fix position with top padding
                         CustomModelView(scene: $scene, onRotate: updateGradientColors)
                             .frame(width: geometry.size.width, height: geometry.size.height * 0.5)
                             .cornerRadius(20)
                             .padding(.top, topPadding) // Apply the proportional padding
 
-                        // Logic for displaying different UI elements
+                        Spacer()
+
+                        // Show the button space even when it's hidden
                         if isDownloading {
                             ProgressView("Downloading...", value: downloadProgress, total: 1.0)
                                 .padding()
                                 .progressViewStyle(WhiteLinearProgressViewStyle())
                         } else if showDownloadPrompt {
                             downloadPromptView
-                        } else if showLaunchButton {
+                        } else {
                             launchButton
+                                .opacity(showLaunchButton ? 1 : 0) // Keeps space reserved while hidden
                         }
                     }
                 }
@@ -88,7 +92,6 @@ struct LaunchScreen: View {
         .navigationViewStyle(.stack)
         .navigationBarHidden(true)
     }
-
     
     private func updateGradientColors(rotationX: CGFloat, rotationY: CGFloat) {
         let redStart = abs(sin(Double(rotationX))) * 0.5 + 0.5
@@ -154,29 +157,40 @@ struct LaunchScreen: View {
             Spacer()
             
             Button(action: {
-                disposeSCNView() // Dispose of the SCNView and associated resources
-            }) {
-                NavigationLink(destination: isFirstLaunch ? AnyView(TutorialView(viewModel: TutorialCardsViewModel())) : AnyView(ARCameraView().environmentObject(coordinator))) {
-                    HStack(alignment: .top, spacing: 0) {
-                        Text("Launch")
-                            .font(
-                                Font.custom("Caslon Doric", size: 24)
-                                    .weight(.medium) // Updated font and weight from Figma
-                            )
-                            .foregroundColor(.white)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 14)
-                    .padding(.bottom, 12)
-                    .background(
-                        Color.white.opacity(0.25) // Set the background opacity
-                    )
-                    .cornerRadius(50) // Rounded corners based on Figma design
+                withAnimation(.easeInOut) {
+                    showNextView = true // Set this to trigger the view change
                 }
+            }) {
+                HStack(alignment: .top, spacing: 0) {
+                    Text("Launch")
+                        .font(
+                            Font.custom("Caslon Doric", size: 24)
+                                .weight(.medium)
+                        )
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 14)
+                .padding(.bottom, 12)
+                .background(
+                    Color.white.opacity(0.25)
+                )
+                .cornerRadius(50)
             }
             .padding(.bottom, 30)
         }
         .padding(.bottom, 32)
+        .fullScreenCover(isPresented: $showNextView) {
+            // Show the destination view with bottom-to-top transition
+            if isFirstLaunch {
+                TutorialView(viewModel: TutorialCardsViewModel())
+                    .transition(.move(edge: .bottom))
+            } else {
+                ARCameraView()
+                    .environmentObject(coordinator)
+                    .transition(.move(edge: .bottom))
+            }
+        }
     }
 
     
