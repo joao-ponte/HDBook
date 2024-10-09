@@ -121,10 +121,12 @@ struct TopBar: View {
                         coordinator.exit360View()
                     }
                 }) {
-                    Image(systemName: "arrow.backward.circle")
-                        .foregroundColor(AppColors.Active.green)
-                        .font(.system(size: 28))
+                    Image("closeImageX")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 28, height: 28)
                         .frame(maxWidth: .infinity, alignment: .leading)
+
                 }
                 .padding()
             } else {
