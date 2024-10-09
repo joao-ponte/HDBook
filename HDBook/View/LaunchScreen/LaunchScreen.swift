@@ -23,8 +23,7 @@ struct LaunchScreen: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
     private let reachability = try! Reachability()
     
-    // Add a boolean to control whether to check for assets
-    @State private var shouldCheckForAssets: Bool = true
+    @State private var shouldCheckForAssets: Bool = false
     
     @State private var scene: SCNScene? = {
         guard let url = Bundle.main.url(forResource: "HDLogo_ARM", withExtension: "usdz", subdirectory: "3DModels.scnassets"),
@@ -52,18 +51,15 @@ struct LaunchScreen: View {
                     .animation(.easeInOut(duration: 1.0))
 
                     VStack(spacing: 0) {
-                        // 25% of the screen height based on geometry
                         let topPadding = geometry.size.height * 0.25
 
-                        // 3D Model View - Fix position with top padding
                         CustomModelView(scene: $scene, onRotate: updateGradientColors)
                             .frame(width: geometry.size.width, height: geometry.size.height * 0.5)
                             .cornerRadius(20)
-                            .padding(.top, topPadding) // Apply the proportional padding
+                            .padding(.top, topPadding)
 
                         Spacer()
 
-                        // Show the button space even when it's hidden
                         if isDownloading {
                             ProgressView("Downloading...", value: downloadProgress, total: 1.0)
                                 .padding()
@@ -72,7 +68,7 @@ struct LaunchScreen: View {
                             downloadPromptView
                         } else {
                             launchButton
-                                .opacity(showLaunchButton ? 1 : 0) // Keeps space reserved while hidden
+                                .opacity(showLaunchButton ? 1 : 0) 
                         }
                     }
                 }
@@ -149,7 +145,7 @@ struct LaunchScreen: View {
     }
     
     private func disposeSCNView() {
-            scene = nil // This will release the SCNScene and any associated resources
+            scene = nil
         }
     
     private var launchButton: some View {
@@ -158,7 +154,7 @@ struct LaunchScreen: View {
             
             Button(action: {
                 withAnimation(.easeInOut) {
-                    showNextView = true // Set this to trigger the view change
+                    showNextView = true
                 }
             }) {
                 HStack(alignment: .top, spacing: 0) {
@@ -181,7 +177,6 @@ struct LaunchScreen: View {
         }
         .padding(.bottom, 32)
         .fullScreenCover(isPresented: $showNextView) {
-            // Show the destination view with bottom-to-top transition
             if isFirstLaunch {
                 TutorialView(viewModel: TutorialCardsViewModel())
                     .transition(.move(edge: .bottom))
