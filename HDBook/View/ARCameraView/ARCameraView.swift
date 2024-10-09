@@ -12,7 +12,7 @@ import InterfaceOrientation
 
 struct ARCameraView: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             ARViewContainer()
@@ -79,6 +79,36 @@ struct ARCameraView: View {
                 }
             }
             
+            // Tutorial button at the bottom
+            if !coordinator.is360ViewActive {
+                VStack {
+                    Spacer()
+                    
+                    HStack(alignment: .center, spacing: 0) {
+                        Spacer()
+                        
+                        NavigationLink(destination: ModifiedTutorialView(viewModel: TutorialCardsViewModel())
+                            .onAppear {
+                                coordinator.pauseARSession()
+                                Task {
+                                    await coordinator.removeAllAnchors()
+                                }
+                            }
+                        ) {
+                            Text("Tutorial")
+                                .font(Font.custom("Caslon Doric", size: 17).weight(.medium))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12) // Changed from top and bottom for balance
+                                .background(Color.white.opacity(0.15))
+                                .cornerRadius(50)
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(.bottom, 20)
+                }
+            }
         }
         .interfaceOrientations(.portrait)
         .onAppear {
@@ -92,7 +122,6 @@ struct ARCameraView: View {
                 await coordinator.removeAllAnchors()
             }
         }
-        .toolbar(.hidden, for: .navigationBar)
         .fullScreenCover(isPresented: $coordinator.isSuperZoomPresented) {
             if let superZoomURL = coordinator.superZoomURL {
                 SuperZoomView(imageURL: superZoomURL)
@@ -105,6 +134,7 @@ struct ARCameraView: View {
                     .environmentObject(coordinator)
             }
         }
+        .toolbar(.hidden, for: .navigationBar)
     }
 }
 
@@ -126,23 +156,8 @@ struct TopBar: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 28, height: 28)
                         .frame(maxWidth: .infinity, alignment: .leading)
-
                 }
                 .padding()
-            } else {
-                Spacer()
-                NavigationLink("Tutorial") {
-                    ModifiedTutorialView(viewModel: TutorialCardsViewModel())
-                        .onAppear {
-                            coordinator.pauseARSession()
-                            Task {
-                                await coordinator.removeAllAnchors()
-                            }
-                        }
-                }
-                .padding()
-                .font(Font.custom("CaslonDoric-Medium", size: 16))
-                .foregroundStyle(Color.green)
             }
         }
         .padding()
