@@ -212,12 +212,12 @@ struct WebViewWithBackButton: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            WebViewContainer(url: url)  // Your WebView
+            WebViewContainer(url: url)
 
             Button(action: {
-                presentationMode.wrappedValue.dismiss()  // Dismiss the view when back arrow is pressed
+                presentationMode.wrappedValue.dismiss()
                 Task {
-                    await coordinator.resumeARSession()  // Resume AR session after closing WebView
+                    await coordinator.resumeARSession()
                 }
             }) {
                 Image(systemName: "chevron.backward")
@@ -226,8 +226,18 @@ struct WebViewWithBackButton: View {
                     .background(Color.black.opacity(0.4))
                     .clipShape(Circle())
             }
-            .padding(.top, 40)  // Adjust padding for your layout
+            .padding(.top, 40)
             .padding(.leading, 20)
+        }
+        .onAppear {
+            Task {
+                coordinator.pauseARSession()  // Pause the AR session when WebView appears
+            }
+        }
+        .onDisappear {
+            Task {
+                await coordinator.resumeARSession()  // Resume the AR session when WebView disappears
+            }
         }
         .navigationBarHidden(true)
     }

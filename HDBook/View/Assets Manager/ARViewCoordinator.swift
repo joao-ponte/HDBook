@@ -708,6 +708,4 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
             await resetARSession()
         }
     }
-
-    
 }
