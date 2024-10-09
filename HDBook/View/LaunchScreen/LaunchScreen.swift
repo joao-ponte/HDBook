@@ -140,20 +140,40 @@ struct LaunchScreen: View {
         .padding(.bottom, 56)
     }
     
-    private var launchButton: some View {
-        NavigationLink(destination: isFirstLaunch ? AnyView(TutorialView(viewModel: TutorialCardsViewModel())) : AnyView(ARCameraView().environmentObject(coordinator))) {
-            Text("Launch")
-                .font(.custom("CaslonDoric-Medium", size: 20))
-                .padding(.horizontal, 28)
-                .padding(.vertical, 14)
-                .foregroundColor(.white)
-                .background(
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(.white, lineWidth: 2)
-                )
+    private func disposeSCNView() {
+            scene = nil // This will release the SCNScene and any associated resources
         }
-        .padding(.bottom, 56)
+    
+    private var launchButton: some View {
+        VStack {
+            Spacer() // This will push the button towards the bottom
+            
+            Button(action: {
+                disposeSCNView() // Dispose of the SCNView and associated resources
+            }) {
+                NavigationLink(destination: isFirstLaunch ? AnyView(TutorialView(viewModel: TutorialCardsViewModel())) : AnyView(ARCameraView().environmentObject(coordinator))) {
+                    HStack(alignment: .top, spacing: 0) {
+                        Text("Launch")
+                            .font(
+                                Font.custom("Caslon Doric", size: 24)
+                                    .weight(.medium) // Updated font and weight from Figma
+                            )
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 14)
+                    .padding(.bottom, 12)
+                    .background(
+                        Color.white.opacity(0.25) // Set the background opacity
+                    )
+                    .cornerRadius(50) // Rounded corners based on Figma design
+                }
+            }
+            .padding(.bottom, 30)
+        }
+        .padding(.bottom, 32)
     }
+
     
     private func checkInternetConnection() {
         if shouldCheckForAssets {
