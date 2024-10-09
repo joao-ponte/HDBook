@@ -29,14 +29,14 @@ struct SuperZoomView: View {
                         Button(action: {
                             coordinator.exitSuperZoomView()
                         }) {
-                            Image(systemName: "arrow.backward.circle")
-                                .foregroundColor(.green)
-                                .font(.system(size: 28))
-                                .padding()
+                            Image("closeImageX") // Replace with your custom image name
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 28, height: 28) // Adjust size as needed
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .padding(.top, geometry.safeAreaInsets.top)
-                        .padding(.leading, geometry.safeAreaInsets.leading)
+                        .padding(.top, geometry.safeAreaInsets.top + 8)
+                        .padding(.leading, geometry.safeAreaInsets.leading + 8)
                     ) : AnyView(EmptyView())
                 )
                 .edgesIgnoringSafeArea(.all)

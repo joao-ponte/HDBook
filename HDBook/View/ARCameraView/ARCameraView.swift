@@ -110,23 +110,18 @@ struct ARCameraView: View {
             }
         }
         // Manual transition for Tutorial View
-        .overlay(
-            ZStack {
-                if showTutorial {
-                    ModifiedTutorialView(viewModel: TutorialCardsViewModel())
-                        .transition(.move(edge: .leading)) // Left-to-right transition
-                        .onAppear {
-                            // AR session is already paused when transitioning to this view
-                        }
-                        .onDisappear {
-                            // Resume AR session when leaving the tutorial view
-                            Task {
-                                await coordinator.resumeARSession()
-                            }
-                        }
+        .fullScreenCover(isPresented: $showTutorial) {
+            ModifiedTutorialView(viewModel: TutorialCardsViewModel())
+                .onAppear {
+                    coordinator.pauseARSession()  // Pause the AR session
                 }
-            }
-        )
+                .onDisappear {
+                    Task {
+                        await coordinator.resumeARSession()  // Resume the AR session when the tutorial is dismissed
+                    }
+                }
+                .transition(.move(edge: .trailing))  // Left-to-right transition effect
+        }
         .fullScreenCover(isPresented: $coordinator.isSuperZoomPresented) {
             if let superZoomURL = coordinator.superZoomURL {
                 SuperZoomView(imageURL: superZoomURL)

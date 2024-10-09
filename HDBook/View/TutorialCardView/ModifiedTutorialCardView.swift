@@ -94,7 +94,7 @@ struct ModifiedTutorialCardView: View {
                 .frame(width: geometry.size.width, height: geometry.size.height * 0.55, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 Spacer()
             }
-            .background(.black)
+            .background(Color(red: 1, green: 0.4, blue: 0.36))
             .dynamicTypeSize(.xSmall ... .xxLarge)
         }
     }

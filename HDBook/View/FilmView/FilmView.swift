@@ -13,9 +13,9 @@ struct FilmView: View {
     let filmURL: URL
     @EnvironmentObject var coordinator: ARViewCoordinator
     @State private var player: AVPlayer?
-
+    
     @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
-
+    
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
@@ -24,10 +24,13 @@ struct FilmView: View {
                         Button(action: {
                             coordinator.exitFilmView()
                         }) {
-                            Image(systemName: "arrow.backward.circle")
-                                .foregroundColor(.green)
-                                .font(.system(size: 28))
+                            Image("closeImageX") // Replace with your custom image name
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 28, height: 28)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
+                        .padding()
                         Spacer()
                     }
                     .padding(.top)
