@@ -703,6 +703,11 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     func dismissWebView() {
         currentWebURL = nil
         showWebView = false
+
+        Task {
+            await resetARSession()
+        }
     }
+
     
 }

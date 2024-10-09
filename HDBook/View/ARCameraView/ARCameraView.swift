@@ -124,7 +124,12 @@ struct ARCameraView: View {
         }
         .fullScreenCover(isPresented: $coordinator.showWebView) {
             if let webURL = coordinator.currentWebURL {
-                WebViewWithBackButton(url: webURL)  // Present the WebView with the back button
+                WebViewWithBackButton(url: webURL)
+                    .onDisappear {
+                        Task {
+                            await coordinator.resumeARSession()
+                        }
+                    }
             }
         }
         .fullScreenCover(isPresented: $coordinator.isSuperZoomPresented) {
@@ -203,6 +208,7 @@ struct ARViewContainer: UIViewRepresentable {
 struct WebViewWithBackButton: View {
     let url: URL
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var coordinator: ARViewCoordinator
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -210,6 +216,9 @@ struct WebViewWithBackButton: View {
 
             Button(action: {
                 presentationMode.wrappedValue.dismiss()  // Dismiss the view when back arrow is pressed
+                Task {
+                    await coordinator.resumeARSession()  // Resume AR session after closing WebView
+                }
             }) {
                 Image(systemName: "chevron.backward")
                     .foregroundColor(.white)
