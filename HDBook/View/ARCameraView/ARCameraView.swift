@@ -12,6 +12,7 @@ import InterfaceOrientation
 
 struct ARCameraView: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
+    @State private var showTutorial = false  // State for manual navigation
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -87,19 +88,17 @@ struct ARCameraView: View {
                     HStack(alignment: .center, spacing: 0) {
                         Spacer()
                         
-                        NavigationLink(destination: ModifiedTutorialView(viewModel: TutorialCardsViewModel())
-                            .onAppear {
-                                coordinator.pauseARSession()
-                                Task {
-                                    await coordinator.removeAllAnchors()
-                                }
+                        Button(action: {
+                            withAnimation(.easeInOut) {
+                                showTutorial = true // Trigger navigation
+                                coordinator.pauseARSession() // Pause the AR Session when navigating to the tutorial
                             }
-                        ) {
+                        }) {
                             Text("Tutorial")
                                 .font(Font.custom("Caslon Doric", size: 17).weight(.medium))
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 16)
-                                .padding(.vertical, 12) // Changed from top and bottom for balance
+                                .padding(.vertical, 12)
                                 .background(Color.white.opacity(0.15))
                                 .cornerRadius(50)
                         }
@@ -110,18 +109,24 @@ struct ARCameraView: View {
                 }
             }
         }
-        .interfaceOrientations(.portrait)
-        .onAppear {
-            Task {
-                await coordinator.resumeARSession()
+        // Manual transition for Tutorial View
+        .overlay(
+            ZStack {
+                if showTutorial {
+                    ModifiedTutorialView(viewModel: TutorialCardsViewModel())
+                        .transition(.move(edge: .leading)) // Left-to-right transition
+                        .onAppear {
+                            // AR session is already paused when transitioning to this view
+                        }
+                        .onDisappear {
+                            // Resume AR session when leaving the tutorial view
+                            Task {
+                                await coordinator.resumeARSession()
+                            }
+                        }
+                }
             }
-        }
-        .onDisappear {
-            coordinator.pauseARSession()
-            Task {
-                await coordinator.removeAllAnchors()
-            }
-        }
+        )
         .fullScreenCover(isPresented: $coordinator.isSuperZoomPresented) {
             if let superZoomURL = coordinator.superZoomURL {
                 SuperZoomView(imageURL: superZoomURL)
@@ -132,6 +137,17 @@ struct ARCameraView: View {
             if let filmURL = coordinator.filmURL {
                 FilmView(filmURL: filmURL)
                     .environmentObject(coordinator)
+            }
+        }
+        .onAppear {
+            Task {
+                await coordinator.resumeARSession()
+            }
+        }
+        .onDisappear {
+            coordinator.pauseARSession()
+            Task {
+                await coordinator.removeAllAnchors()
             }
         }
         .toolbar(.hidden, for: .navigationBar)
