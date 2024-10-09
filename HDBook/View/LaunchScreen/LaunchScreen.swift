@@ -23,7 +23,7 @@ struct LaunchScreen: View {
     private let reachability = try! Reachability()
     
     // Add a boolean to control whether to check for assets
-    @State private var shouldCheckForAssets: Bool = false
+    @State private var shouldCheckForAssets: Bool = true
     
     @State private var scene: SCNScene? = {
         guard let url = Bundle.main.url(forResource: "HDLogo_ARM", withExtension: "usdz", subdirectory: "3DModels.scnassets"),
@@ -33,9 +33,8 @@ struct LaunchScreen: View {
         return scene
     }()
     
-    @State private var backgroundColor: Color = Color(red: 1.0, green: 0.52, blue: 0.49) // #FF857C
-       @State private var noiseImage: UIImage? = nil
-       @State private var hueRotationAngle: Double = 0
+    @State private var startColor: Color = Color(red: 0.9, green: 0.1, blue: 0.1)
+    @State private var endColor: Color = Color(red: 0.3, green: 0, blue: 0)
     
     init(viewModel: TutorialCardsViewModel) {
         self.viewModel = viewModel
@@ -45,26 +44,19 @@ struct LaunchScreen: View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
-                    backgroundColor
-                    if let noiseImage = noiseImage {
-                                            Image(uiImage: noiseImage)
-                                                .resizable()
-                                                .scaledToFill()
-                                                .ignoresSafeArea()
-                                                .hueRotation(.degrees(hueRotationAngle))
-                                                .blendMode(.multiply)
-                                        } else {
-                                            backgroundColor
-                                                .ignoresSafeArea()
-                                        }
+                    LinearGradient(gradient: Gradient(colors: [startColor, endColor]),
+                                   startPoint: .topLeading,
+                                   endPoint: .bottomTrailing)
+                    .ignoresSafeArea()
+                    .animation(.easeInOut(duration: 1.0))
                     
                     VStack(spacing: 0) {
                         // 3D Model View
-                        CustomModelView(scene: $scene, onRotate: updateNoiseAndShadow)
+                        CustomModelView(scene: $scene, onRotate: updateGradientColors)
                             .frame(width: geometry.size.width, height: geometry.size.height * 0.5)
                             .cornerRadius(20)
                         
-                        
+                        // Logic for displaying different UI elements
                         if isDownloading {
                             ProgressView("Downloading...", value: downloadProgress, total: 1.0)
                                 .padding()
@@ -77,7 +69,6 @@ struct LaunchScreen: View {
                     }
                 }
                 .onAppear {
-                    generateNoiseImage()
                     if shouldCheckForAssets {
                         checkInternetConnection()
                     } else {
@@ -94,22 +85,13 @@ struct LaunchScreen: View {
         .navigationBarHidden(true)
     }
     
-    private func generateNoiseImage() {
-        let filter = CIFilter(name: "CIRandomGenerator")! // Correctly create CIRandomGenerator filter
-        let context = CIContext(options: nil)
-
-        if let ciImage = filter.outputImage?.cropped(to: CGRect(x: 0, y: 0, width: 1024, height: 1024)),
-           let cgImage = context.createCGImage(ciImage, from: ciImage.extent) {
-            noiseImage = UIImage(cgImage: cgImage)
-        }
-    }
-    
-    private func updateNoiseAndShadow(rotationX: CGFloat, rotationY: CGFloat) {
-        // Adjust hue rotation based on the rotation of the 3D model
-        hueRotationAngle = Double(rotationX + rotationY) * 20
+    private func updateGradientColors(rotationX: CGFloat, rotationY: CGFloat) {
+        let redStart = abs(sin(Double(rotationX))) * 0.5 + 0.5
+        let redEnd = abs(cos(Double(rotationY))) * 0.3 + 0.3
+        let blackTone = abs(sin(Double(rotationX * rotationY))) * 0.5
         
-        // Optionally regenerate noise with new characteristics based on rotation (if desired)
-        // For simplicity, we're just adjusting the hue rotation here
+        startColor = Color(red: redStart, green: 0, blue: 0)
+        endColor = Color(red: redEnd, green: 0, blue: 0).opacity(1 - blackTone)
     }
     
     private var downloadPromptView: some View {
@@ -158,30 +140,20 @@ struct LaunchScreen: View {
         .padding(.bottom, 56)
     }
     
-    private func disposeSCNView() {
-        scene = nil // This will release the SCNScene and any associated resources
-    }
-    
     private var launchButton: some View {
-        Button(action: {
-            disposeSCNView() // Dispose of the SCNView and associated resources
-        }) {
-            NavigationLink(destination: isFirstLaunch ? AnyView(TutorialView(viewModel: TutorialCardsViewModel())) : AnyView(ARCameraView().environmentObject(coordinator))) {
-                Text("Launch")
-                    .font(.custom("CaslonDoric-Medium", size: 20))
-                    .padding(.horizontal, 28)
-                    .padding(.vertical, 14)
-                    .foregroundColor(.white)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28)
-                            .stroke(.white, lineWidth: 2)
-                    )
-            }
+        NavigationLink(destination: isFirstLaunch ? AnyView(TutorialView(viewModel: TutorialCardsViewModel())) : AnyView(ARCameraView().environmentObject(coordinator))) {
+            Text("Launch")
+                .font(.custom("CaslonDoric-Medium", size: 20))
+                .padding(.horizontal, 28)
+                .padding(.vertical, 14)
+                .foregroundColor(.white)
+                .background(
+                    RoundedRectangle(cornerRadius: 28)
+                        .stroke(.white, lineWidth: 2)
+                )
         }
         .padding(.bottom, 56)
     }
-    
-    
     
     private func checkInternetConnection() {
         if shouldCheckForAssets {
