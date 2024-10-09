@@ -49,13 +49,17 @@ struct LaunchScreen: View {
                                    endPoint: .bottomTrailing)
                     .ignoresSafeArea()
                     .animation(.easeInOut(duration: 1.0))
-                    
+
                     VStack(spacing: 0) {
+                        // 25% of the screen height based on geometry
+                        let topPadding = geometry.size.height * 0.25
+
                         // 3D Model View
                         CustomModelView(scene: $scene, onRotate: updateGradientColors)
                             .frame(width: geometry.size.width, height: geometry.size.height * 0.5)
                             .cornerRadius(20)
-                        
+                            .padding(.top, topPadding) // Apply the proportional padding
+
                         // Logic for displaying different UI elements
                         if isDownloading {
                             ProgressView("Downloading...", value: downloadProgress, total: 1.0)
@@ -84,6 +88,7 @@ struct LaunchScreen: View {
         .navigationViewStyle(.stack)
         .navigationBarHidden(true)
     }
+
     
     private func updateGradientColors(rotationX: CGFloat, rotationY: CGFloat) {
         let redStart = abs(sin(Double(rotationX))) * 0.5 + 0.5
@@ -146,7 +151,7 @@ struct LaunchScreen: View {
     
     private var launchButton: some View {
         VStack {
-            Spacer() // This will push the button towards the bottom
+            Spacer()
             
             Button(action: {
                 disposeSCNView() // Dispose of the SCNView and associated resources
