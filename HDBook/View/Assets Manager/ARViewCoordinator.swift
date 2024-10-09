@@ -79,7 +79,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         }
         activeAnchor = nil
         activeAnchors.removeAll()
-        isTrackingAsset = false // Reset when all anchors are removed
+        isTrackingAsset = false
     }
     
     private func createARConfiguration() throws -> ARImageTrackingConfiguration {
