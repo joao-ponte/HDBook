@@ -29,10 +29,10 @@ struct SuperZoomView: View {
                         Button(action: {
                             coordinator.exitSuperZoomView()
                         }) {
-                            Image("closeImageX") // Replace with your custom image name
+                            Image("closeImageX")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: 28, height: 28) // Adjust size as needed
+                                .frame(width: 28, height: 28)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                         .padding(.top, geometry.safeAreaInsets.top + 8)

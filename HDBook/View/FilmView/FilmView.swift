@@ -13,13 +13,12 @@ struct FilmView: View {
     let filmURL: URL
     @EnvironmentObject var coordinator: ARViewCoordinator
     @State private var player: AVPlayer?
-    
-    @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
-    
+
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                if !isLandscape {
+                // Only show the close button if the screen is in portrait mode
+                if !isLandscape(geometry: geometry) {
                     HStack {
                         Button(action: {
                             coordinator.exitFilmView()
@@ -63,14 +62,12 @@ struct FilmView: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .background(Color.black)
-            .onRotate { newOrientation in
-                currentOrientation = newOrientation
-            }
             .interfaceOrientations(.landscape)
         }
     }
-    
-    private var isLandscape: Bool {
-        return currentOrientation.isLandscape
+
+    // Check if the screen is in landscape mode using the screen dimensions
+    private func isLandscape(geometry: GeometryProxy) -> Bool {
+        return geometry.size.width > geometry.size.height
     }
 }
