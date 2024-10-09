@@ -122,6 +122,11 @@ struct ARCameraView: View {
                 }
                 .transition(.move(edge: .trailing))  // Left-to-right transition effect
         }
+        .fullScreenCover(isPresented: $coordinator.showWebView) {
+            if let webURL = coordinator.currentWebURL {
+                WebViewWithBackButton(url: webURL)  // Present the WebView with the back button
+            }
+        }
         .fullScreenCover(isPresented: $coordinator.isSuperZoomPresented) {
             if let superZoomURL = coordinator.superZoomURL {
                 SuperZoomView(imageURL: superZoomURL)
@@ -192,5 +197,29 @@ struct ARViewContainer: UIViewRepresentable {
     
     func makeCoordinator() -> ARViewCoordinator {
         return coordinator
+    }
+}
+
+struct WebViewWithBackButton: View {
+    let url: URL
+    @Environment(\.presentationMode) var presentationMode
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            WebViewContainer(url: url)  // Your WebView
+
+            Button(action: {
+                presentationMode.wrappedValue.dismiss()  // Dismiss the view when back arrow is pressed
+            }) {
+                Image(systemName: "chevron.backward")
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.black.opacity(0.4))
+                    .clipShape(Circle())
+            }
+            .padding(.top, 40)  // Adjust padding for your layout
+            .padding(.leading, 20)
+        }
+        .navigationBarHidden(true)
     }
 }

@@ -35,6 +35,8 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
     @Published var showAlert = false
     @Published var show360ViewAlert = false
     @Published var isTrackingAsset: Bool = false
+    @Published var currentWebURL: URL?
+    @Published var showWebView = false
     
     private var firebaseStorageService: FirebaseStorageService
     
@@ -412,7 +414,9 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         }
         
         if ConnectivityManager.isConnectedToInternet() {
-            presentWebView(url: url)
+            // Store the URL and trigger web view presentation
+            currentWebURL = url
+            showWebView = true
         } else {
             print("No internet connection. Showing custom alert...")
             showAlert = true
@@ -454,7 +458,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         trackingTimers.removeValue(forKey: uuid)
         
         if activeAnchors.isEmpty {
-                isTrackingAsset = false
+            isTrackingAsset = false
         }
         
         print("Tracking timeout handled for UUID: \(uuid)")
@@ -506,7 +510,7 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         // Create a directional light component
         var directionalLight = DirectionalLightComponent()
         directionalLight.intensity = 30000 // Adjust the intensity for shadow strength
-//        directionalLight.color = .purple
+        //        directionalLight.color = .purple
         
         // Create an entity and attach the light component
         let lightEntity = Entity()
@@ -525,31 +529,15 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         let mesh = MeshResource.generatePlane(width: planeSize, depth: planeSize)
         let material = OcclusionMaterial(receivesDynamicLighting: true)  // Plane receives shadows
         let shadowPlane = ModelEntity(mesh: mesh, materials: [material])
-
+        
         // Position the plane at the origin, where you expect shadows to fall
         shadowPlane.position = [0, 0, 0]  // Place directly at the ground level
-
+        
         // Create an anchor and add the plane to the scene
         let shadowPlaneAnchor = AnchorEntity(world: [0, 0, 0])
         shadowPlaneAnchor.addChild(shadowPlane)
         arView.scene.addAnchor(shadowPlaneAnchor)
     }
-
-    private func presentWebViewConfirmation(url: URL) {
-        let alert = UIAlertController(title: "Open Webpage", message: "Do you want to open this webpage?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Open", style: .default, handler: { _ in
-            if let viewController = UIApplication.shared.windows.first?.rootViewController {
-                WebViewManager.presentWebView(url: url, in: viewController)
-            }
-        }))
-        
-        if let viewController = UIApplication.shared.windows.first?.rootViewController {
-            viewController.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    
     
     // MARK: - ARSessionDelegate
     
@@ -694,12 +682,6 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         print("Exited Film view.")
     }
     
-    private func presentWebView(url: URL) {
-        if let viewController = UIApplication.shared.windows.first?.rootViewController {
-            WebViewManager.presentWebView(url: url, in: viewController)
-        }
-    }
-    
     func dismissAlertAndResetARSession() {
         showAlert = false
         Task {
@@ -716,6 +698,11 @@ class ARViewCoordinator: NSObject, ARSessionDelegate, ObservableObject, ARSessio
         } catch {
             print("Failed to reset AR session: \(error)")
         }
+    }
+    
+    func dismissWebView() {
+        currentWebURL = nil
+        showWebView = false
     }
     
 }
