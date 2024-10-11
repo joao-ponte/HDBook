@@ -44,10 +44,13 @@ struct Constants {
         case kaoLaAmani = "Story_p609_Kao La Amani_WEB-18"
         case thirdSpace = "Story_p617_Third Space_WEB-18"
         
+        
+        //https://www.hayesdavidson.com/stories/an-early-stage-illustrative-concept-to-support-a-revitalised-seattle
+        //https://app.envisionvr.net/?intent=view/HY01
         var url: URL? {
             switch self {
             case .southDowntow:
-                return URL(string: "https://www.hayesdavidson.com/stories/an-early-stage-illustrative-concept-to-support-a-revitalised-seattle")
+                return URL(string: "https://app.envisionvr.net/?intent=view/HY01")
             case .memorialLearningCentre:
                 return URL(string: "https://www.hayesdavidson.com/stories/planning-images-for-a-sensitive-project-in-a-heritage-setting")
             case .tintagelCastleFootbridge:

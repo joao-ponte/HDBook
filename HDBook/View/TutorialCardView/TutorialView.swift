@@ -11,6 +11,7 @@ import InterfaceOrientation
 struct TutorialView: View {
     @ObservedObject var viewModel: TutorialCardsViewModel
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
+    
     init(viewModel: TutorialCardsViewModel) {
         self.viewModel = viewModel
     }
@@ -33,20 +34,29 @@ struct TutorialView: View {
                         }
                     }
                 }
-                
-                NavigationLink("Skip") {
-                    ARCameraView()
+                Spacer()
+
+                HStack(alignment: .center, spacing: 0) {
+                    Spacer()
+                    NavigationLink("Close") {
+                        ARCameraView()
+                    }
+                    .font(Font.custom("CaslonDoric-Medium", size: 17))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color.white.opacity(0.15))
+                    .cornerRadius(50)
+                    Spacer()
                 }
-                .frame(width: 100, height: 40, alignment: .center)
-                .font(Font.custom(Fonts.CaslonDoric.medium, size: 19))
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(AppColors.Active.grey))
-                .foregroundStyle(Color.white)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 36)
+                .frame(width: geometry.size.width, alignment: .bottom)
+                
             }
         }
         .interfaceOrientations(.portrait)
-        .background(.black)
+        .background(Color(red: 1, green: 0.4, blue: 0.36))
         .navigationBarBackButtonHidden(true)
         .onAppear {
             viewModel.fetchTutorialCards()

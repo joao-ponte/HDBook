@@ -34,7 +34,6 @@ struct ModifiedTutorialView: View {
                 }
                 Spacer()
                 
-                // Close Button at the Bottom
                 HStack(alignment: .center, spacing: 0) {
                     Spacer()
                     Button(action: {
@@ -57,7 +56,7 @@ struct ModifiedTutorialView: View {
         }
         .interfaceOrientations(.portrait)
         .background(Color(red: 1, green: 0.4, blue: 0.36))
-        .navigationBarBackButtonHidden(true)  // Back button is hidden
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             viewModel.fetchTutorialCards()
         }
