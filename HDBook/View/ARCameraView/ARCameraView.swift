@@ -13,7 +13,7 @@ import InterfaceOrientation
 struct ARCameraView: View {
     @EnvironmentObject var coordinator: ARViewCoordinator
     @State private var showTutorial = false  // State for manual navigation
-
+    
     var body: some View {
         ZStack(alignment: .top) {
             ARViewContainer()
@@ -26,7 +26,7 @@ struct ARCameraView: View {
                 NoInternetAlertView {
                     coordinator.dismissAlertAndResetARSession()
                 }
-                .transition(.opacity)
+                .transition(.move(edge: .bottom))  // Animate from bottom
                 .zIndex(1)
             }
             
@@ -209,11 +209,11 @@ struct WebViewWithBackButton: View {
     let url: URL
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var coordinator: ARViewCoordinator
-
+    
     var body: some View {
         ZStack(alignment: .topLeading) {
             WebViewContainer(url: url)
-
+            
             Button(action: {
                 presentationMode.wrappedValue.dismiss()
                 Task {

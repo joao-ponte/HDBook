@@ -12,46 +12,47 @@ struct NoInternetAlertView: View {
     
     var body: some View {
         ZStack {
+            // Background dimming effect
             Color.black.opacity(0.6)
                 .edgesIgnoringSafeArea(.all)
             
-            VStack(spacing: 20) {
-                Image("sadDog")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
+            VStack {
+                Spacer() // Pushes the alert to the bottom
                 
-                Text("No Internet Connection")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.black)
-                    .padding(.horizontal)
-                
-                Text("Please check your internet connection and try again.")
-                    .font(.body)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                
-                Button(action: {
-                    dismissAction()
-                }) {
-                    Text("OK")
-                        .font(.headline)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                        .shadow(radius: 5)
+                VStack(alignment: .center, spacing: 18) {
+                    // Main text
+                    Text("Please check your\nconnection and try again.")
+                        .font(Font.custom("CaslonDoric-Medium", size: 24))
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(red: 1, green: 0.4, blue: 0.36))
+                        .padding(.top, 14)
+                        .frame(maxWidth: .infinity, alignment: .top)
+                    
+                    // OK Button
+                    Button(action: {
+                        dismissAction()
+                    }) {
+                        Text("OK")
+                            .font(Font.custom("CaslonDoric-Medium", size: 24))
+                            .foregroundColor(.white)
+                            .padding(.vertical, 14)
+                            .padding(.horizontal, 20)
+                            .background(Color(red: 1, green: 0.4, blue: 0.36))
+                            .cornerRadius(50)
+                    }
+                    .frame(width: 78)
+                    
+                    Spacer()
+                        .frame(height: 32) // Adds spacing below the button
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 18)
+                .padding(.bottom, 0)
+                .frame(maxWidth: .infinity)
+                .background(Color(red: 0.95, green: 0.82, blue: 0.83))
+                .cornerRadius(12)
+                .shadow(radius: 10)
             }
-            .padding()
-            .background(Color.white)
-            .cornerRadius(20)
-            .shadow(radius: 20)
-            .frame(maxWidth: 300)
+            .edgesIgnoringSafeArea(.bottom) // Ensure it goes to the bottom of the screen
         }
     }
 }
