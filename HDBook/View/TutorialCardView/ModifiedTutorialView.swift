@@ -19,9 +19,7 @@ struct ModifiedTutorialView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            VStack {
-                Spacer()
-
+            VStack(spacing: 0) {
                 TabView(selection: $currentIndex) {
                     ForEach(Array(viewModel.tutorialCards.enumerated()), id: \.element.title) { index, card in
                         ModifiedTutorialCardView(card: card)
@@ -39,11 +37,10 @@ struct ModifiedTutorialView: View {
                         Image("ElipseTutorial")
                             .resizable()
                             .frame(width: index == currentIndex ? 20 : 10, height: index == currentIndex ? 20 : 10)
-                            .padding(.horizontal, 4)
+                            .padding(.horizontal, 2)
                     }
                 }
-                .padding(.top, 20)
-                
+                .padding(.bottom, 61)
                 
                 HStack(alignment: .center, spacing: 0) {
                     Spacer()
@@ -61,7 +58,7 @@ struct ModifiedTutorialView: View {
                     Spacer()
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 36)
+                .padding(.bottom)
                 .frame(width: geometry.size.width, alignment: .bottom)
             }
         }

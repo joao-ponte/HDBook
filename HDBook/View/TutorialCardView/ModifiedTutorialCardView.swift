@@ -15,6 +15,7 @@ struct ModifiedTutorialCardView: View {
         GeometryReader { geometry in
             VStack {
                 Spacer()
+                .frame(height: geometry.size.height * (120 / 844))
                 
                 Text(card.title)
                     .foregroundColor(.white)
@@ -34,15 +35,13 @@ struct ModifiedTutorialCardView: View {
                     
                     Text(card.textTutorial)
                         .foregroundColor(.white)
-                        .font(.custom(Fonts.CaslonDoric.regular, size: geometry.size.width * 0.06))
+                        .font(.custom(Fonts.CaslonDoric.regular, size: geometry.size.width * 0.07))
                         .multilineTextAlignment(.leading)
                         .lineLimit(nil) // Allow unlimited lines
-                        .fixedSize(horizontal: false, vertical: true) // Allow text to expand vertically
-                        .padding(.top, 48)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 40)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
-                
-                Spacer()
             }
             .background(Color(red: 1, green: 0.4, blue: 0.36))
             .dynamicTypeSize(.xSmall ... .xxLarge)
