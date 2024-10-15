@@ -11,6 +11,7 @@ import InterfaceOrientation
 struct ModifiedTutorialView: View {
     @ObservedObject var viewModel: TutorialCardsViewModel
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
+    @State private var currentIndex = 0  // To track the currently visible card
     
     init(viewModel: TutorialCardsViewModel) {
         self.viewModel = viewModel
@@ -20,19 +21,29 @@ struct ModifiedTutorialView: View {
         GeometryReader { geometry in
             VStack {
                 Spacer()
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(viewModel.tutorialCards, id: \.title) { card in
-                            ModifiedTutorialCardView(card: card)
-                                .frame(width: geometry.size.width * 0.75, height: geometry.size.height * 0.90, alignment: .leading)
-                                .scrollTransition(axis: .horizontal) { content, phase in
-                                    content
-                                        .rotation3DEffect(.degrees(phase.value * -40.0), axis: (x: 0, y: 1, z: 0))
-                                }
-                        }
+
+                TabView(selection: $currentIndex) {
+                    ForEach(Array(viewModel.tutorialCards.enumerated()), id: \.element.title) { index, card in
+                        ModifiedTutorialCardView(card: card)
+                            .frame(width: geometry.size.width * 0.75, height: geometry.size.height * 0.90, alignment: .leading)
+                            .opacity(currentIndex == index ? 1.0 : 0.5)  // Full opacity for current card, reduced for others
+                            .animation(.easeInOut(duration: 0.3), value: currentIndex)  // Add smooth transition
+                            .tag(index)  // Use the index to track the current view
                     }
                 }
-                Spacer()
+                .tabViewStyle(.page(indexDisplayMode: .never))  // Hide default indicators
+                
+                // HStack with indicators
+                HStack {
+                    ForEach(0..<viewModel.tutorialCards.count, id: \.self) { index in
+                        Image("ElipseTutorial")
+                            .resizable()
+                            .frame(width: index == currentIndex ? 20 : 10, height: index == currentIndex ? 20 : 10)
+                            .padding(.horizontal, 4)
+                    }
+                }
+                .padding(.top, 20)
+                
                 
                 HStack(alignment: .center, spacing: 0) {
                     Spacer()

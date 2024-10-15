@@ -19,7 +19,7 @@ struct TutorialCardView: View {
                 Text(card.title)
                     .foregroundColor(.white)
                     .font(.custom(Fonts.CaslonDoric.medium, size: geometry.size.width * 0.18))
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 20)
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                 
                 Spacer()
@@ -38,6 +38,8 @@ struct TutorialCardView: View {
                         .foregroundColor(.white)
                         .font(.custom(Fonts.CaslonDoric.regular, size: geometry.size.width * 0.06))
                         .multilineTextAlignment(.leading)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 48)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                 }

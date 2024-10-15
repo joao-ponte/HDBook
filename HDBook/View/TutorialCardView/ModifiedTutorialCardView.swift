@@ -12,18 +12,16 @@ struct ModifiedTutorialCardView: View {
     let card: TutorialCards
     
     var body: some View {
-        
         GeometryReader { geometry in
             VStack {
                 Spacer()
+                
                 Text(card.title)
                     .foregroundColor(.white)
                     .font(.custom(Fonts.CaslonDoric.medium, size: geometry.size.width * 0.18))
                     .padding(.bottom, 24)
                     .frame(maxWidth: .infinity, alignment: .topLeading)
-                
-                Spacer()
-                
+                                
                 VStack {
                     VStack(alignment: .center, spacing: 0) {
                         Image(card.backgroundImage)
@@ -38,9 +36,12 @@ struct ModifiedTutorialCardView: View {
                         .foregroundColor(.white)
                         .font(.custom(Fonts.CaslonDoric.regular, size: geometry.size.width * 0.06))
                         .multilineTextAlignment(.leading)
+                        .lineLimit(nil) // Allow unlimited lines
+                        .fixedSize(horizontal: false, vertical: true) // Allow text to expand vertically
                         .padding(.top, 48)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
+                
                 Spacer()
             }
             .background(Color(red: 1, green: 0.4, blue: 0.36))

@@ -26,7 +26,7 @@ struct TutorialCardsData {
                      ),
         
         TutorialCards(title: "Prepare your images.",
-                      textTutorial: "Lay them on a flat surface",
+                      textTutorial: "Lay them on a flat surface.",
                       backgroundImage: "prepareImageTutorial"
                      ),
         
